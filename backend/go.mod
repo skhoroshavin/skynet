@@ -1,4 +1,4 @@
-module otus_social
+module skynet
 
 go 1.16
 
