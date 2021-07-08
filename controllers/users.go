@@ -26,13 +26,13 @@ func (u Users) getUser(c *gin.Context) {
 
 	id, err := strconv.Atoi(sid)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H {"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
 	user, err := u.svcUsers.GetUser(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H {"error": err})
+		c.JSON(http.StatusNotFound, gin.H{"error": err})
 		return
 	}
 

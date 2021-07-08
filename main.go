@@ -1,12 +1,15 @@
-package otus_social
+package main
 
 import (
 	"log"
 	"otus_social/controllers"
+	"otus_social/services"
 )
 
 func main() {
-	server := controllers.CreateServer()
+	usersSvc := services.UsersSvc{}
+
+	server := controllers.CreateServer(usersSvc)
 
 	err := server.Run()
 	if err != nil {

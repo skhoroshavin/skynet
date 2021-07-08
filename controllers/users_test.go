@@ -35,12 +35,12 @@ func TestOnlyNumericalUsersAreValid(t *testing.T) {
 func TestGetExistingUser(t *testing.T) {
 	exampleUser := services.User{
 		FirstName: "John",
-		LastName: "Doe",
-		BirthDate: time.Date(1983, time.November, 18, 0, 0, 0, 0, time.UTC),
+		LastName:  "Doe",
+		Birthday:  time.Date(1983, time.November, 18, 0, 0, 0, 0, time.UTC),
 	}
 
 	usersSvc := new(UsersSvcMock)
-	usersSvc.On("GetUser", mock.Anything).Return(exampleUser, nil)
+	usersSvc.On("GetUser", 3).Return(&exampleUser, nil)
 
 	s := CreateServer(usersSvc)
 	req := httptest.NewRequest("GET", "/users/3", nil)
@@ -53,6 +53,16 @@ func TestGetExistingUser(t *testing.T) {
 	err := json.Unmarshal(res.Body.Bytes(), &body)
 	assert.Nil(t, err)
 
+	assert.Contains(t, body, "first_name")
+	assert.Equal(t, exampleUser.FirstName, body["first_name"])
+
+	assert.Contains(t, body, "last_name")
+	assert.Equal(t, exampleUser.LastName, body["last_name"])
+
+	assert.Contains(t, body, "birthday")
+	parsedBirthday, err := time.Parse(time.RFC3339, body["birthday"])
+	assert.Nil(t, err)
+	assert.Equal(t, exampleUser.Birthday, parsedBirthday)
 }
 
 func TestGetNonExistentUser(t *testing.T) {

@@ -6,7 +6,6 @@ import (
 )
 
 type Auth struct {
-
 }
 
 func authController() Auth {
