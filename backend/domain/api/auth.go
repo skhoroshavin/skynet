@@ -1,8 +1,11 @@
 package api
 
 type Auth interface {
-	CreateSession(id string) (string, error)
-	InvalidateSession(sid string)
+	CreateUser(id string, password string) error
+	UpdatePassword(id string, oldPassword string, newPassword string) error
 
-	UserFromSession(sid string) (string, error)
+	//CreateSession(id string) (string, error)
+	//InvalidateSession(sid string)
+	//
+	//UserFromSession(sid string) (string, error)
 }
