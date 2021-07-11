@@ -3,13 +3,17 @@ package main
 import (
 	"log"
 	"skynet/domain/services"
+	"skynet/domain/spi"
 	"skynet/http"
 )
 
 func main() {
-	usersSvc := services.NewUserService(nil)
+	usersStorage := nil
 
-	server := http.NewServer(usersSvc)
+	authSvc := services.NewAuthService(usersStorage)
+	usersSvc := services.NewUserService(usersStorage)
+
+	server := http.NewServer(authSvc, usersSvc)
 
 	log.Fatalln(server.Run())
 }

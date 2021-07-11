@@ -3,38 +3,12 @@ package http
 import (
 	"errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"skynet/domain/models"
 	"testing"
 	"time"
 )
-
-type UsersServiceMock struct {
-	mock.Mock
-}
-
-func (m *UsersServiceMock) CreateUser(id string, password string) error {
-	args := m.Called(id, password)
-	return args.Error(0)
-}
-
-func (m *UsersServiceMock) UpdatePassword(id string, oldPassword string, newPassword string) error {
-	args := m.Called(id, oldPassword, newPassword)
-	return args.Error(0)
-}
-
-func (m *UsersServiceMock) UpdateUserData(id string, data *models.UserData) error {
-	args := m.Called(id, data)
-	return args.Error(0)
-}
-
-func (m *UsersServiceMock) UserData(id string) (*models.UserData, error) {
-	args := m.Called(id)
-	res, _ := args.Get(0).(*models.UserData)
-	return res, args.Error(1)
-}
 
 func TestGetExistingUser(t *testing.T) {
 	s := newTestServer()
@@ -69,11 +43,11 @@ func TestGetExistingUser(t *testing.T) {
 func TestGetNonExistentUser(t *testing.T) {
 	s := newTestServer()
 	s.users.On("UserData", "jonny").
-		Return(nil, errors.New("user jonny not found"))
+		Return(nil, errors.New("getUser jonny not found"))
 
 	req := httptest.NewRequest("GET", "/users/jonny", nil)
 	res := s.serve(req)
 
 	assert.Equal(t, http.StatusNotFound, res.Code)
-	assert.JSONEq(t, `{"error": "user jonny not found"}`, res.Body.String())
+	assert.JSONEq(t, `{"error": "getUser jonny not found"}`, res.Body.String())
 }

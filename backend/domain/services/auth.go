@@ -51,3 +51,7 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 
 	return nil
 }
+
+func (a AuthService) CreateSession(id string) (string, error) {
+	panic("not implemented")
+}
