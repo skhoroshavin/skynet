@@ -20,12 +20,9 @@ func (a AuthService) CreateUser(id string, password string) error {
 		return errors.New("password cannot be empty")
 	}
 
-	err := a.users.Insert(id, password)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return spi.Transactional(a.users, func(users spi.UsersRepository) error {
+		return users.Insert(id, password)
+	})
 }
 
 func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword string) error {
@@ -33,23 +30,18 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 		return errors.New("password cannot be empty")
 	}
 
-	txn, err := a.users.Transaction(id)
-	if err != nil {
-		return errors.New("failed to start transaction")
-	}
-	defer txn.Rollback()
+	return spi.Transactional(a.users, func(users spi.UsersRepository) error {
+		password, err := users.Password(id)
+		if err != nil {
+			return err
+		}
 
-	if !txn.MatchPassword(oldPassword) {
-		return errors.New("invalid old password")
-	}
+		if password != oldPassword {
+			return errors.New("invalid old password")
+		}
 
-	txn.UpdatePassword(newPassword)
-
-	if txn.Commit() != nil {
-		return errors.New("failed to change password")
-	}
-
-	return nil
+		return users.UpdatePassword(id, newPassword)
+	})
 }
 
 func (a AuthService) CreateSession(id string) (string, error) {

@@ -7,7 +7,7 @@ import (
 
 func TestAuthService_CreateUser(t *testing.T) {
 	storage := newTestUsersStorage()
-	svc := NewUserService(storage)
+	svc := NewAuthService(storage)
 
 	t.Run("can create new user", func(t *testing.T) {
 		storage.reset()
@@ -42,7 +42,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 
 func TestAuthService_UpdatePassword(t *testing.T) {
 	storage := newTestUsersStorage()
-	svc := NewUserService(storage)
+	svc := NewAuthService(storage)
 
 	t.Run("can update password", func(t *testing.T) {
 		storage.reset()

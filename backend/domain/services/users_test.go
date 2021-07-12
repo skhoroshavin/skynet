@@ -8,11 +8,12 @@ import (
 
 func TestUserService_UserData(t *testing.T) {
 	storage := newTestUsersStorage()
+	auth := NewAuthService(storage)
 	svc := NewUserService(storage)
 
 	t.Run("new user has empty user data", func(t *testing.T) {
 		storage.reset()
-		svc.CreateUser("john", "easy")
+		auth.CreateUser("john", "easy")
 
 		data, err := svc.UserData("john")
 
@@ -35,7 +36,7 @@ func TestUserService_UserData(t *testing.T) {
 
 	t.Run("user can update user data", func(t *testing.T) {
 		storage.reset()
-		svc.CreateUser("john", "easy")
+		auth.CreateUser("john", "easy")
 
 		userData := &models.UserData{
 			FirstName: "",

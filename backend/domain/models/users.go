@@ -10,6 +10,17 @@ const (
 	GenderFemale
 )
 
+func (g Gender) String() string {
+	switch g {
+	case GenderMale:
+		return "male"
+	case GenderFemale:
+		return "female"
+	default:
+		return "undefined"
+	}
+}
+
 type UserData struct {
 	FirstName string     `json:"first_name,omitempty"`
 	LastName  string     `json:"last_name,omitempty"`

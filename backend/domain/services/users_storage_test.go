@@ -13,14 +13,6 @@ type TestUsersStorage struct {
 	data      map[string]models.UserData
 }
 
-type TestUsersStorageTxn struct {
-	storage *TestUsersStorage
-
-	id       string
-	password string
-	data     models.UserData
-}
-
 func newTestUsersStorage() *TestUsersStorage {
 	r := &TestUsersStorage{}
 	r.reset()
@@ -32,54 +24,76 @@ func (u *TestUsersStorage) reset() {
 	u.data = map[string]models.UserData{}
 }
 
-func (u *TestUsersStorage) Insert(id string, password string) error {
+func (u *TestUsersStorage) Begin() (spi.UsersRepository, error) {
+	return TestUsersRepository{
+		storage: u,
+		passwords: u.passwords,
+		data: u.data,
+	}, nil
+}
+
+type TestUsersRepository struct {
+	storage *TestUsersStorage
+
+	passwords map[string]string
+	data      map[string]models.UserData
+}
+
+func (u TestUsersRepository) Save() error {
+	u.storage.passwords = u.passwords
+	u.storage.data = u.data
+	return nil
+}
+
+func (u TestUsersRepository) Cancel() {
+
+}
+
+func (u TestUsersRepository) Insert(id string, password string) error {
 	_, ok := u.passwords[id]
 	if ok {
 		return errors.New("user already exists")
 	}
 
 	u.passwords[id] = password
+	u.data[id] = models.UserData{}
 	return nil
 }
 
-func (u *TestUsersStorage) Transaction(id string) (spi.UserTransaction, error) {
-	pwd, ok := u.passwords[id]
+func (u TestUsersRepository) UpdatePassword(id string, password string) error {
+	_, ok := u.passwords[id]
+	if !ok {
+		return errors.New("user not found")
+	}
+
+	u.passwords[id] = password
+	return nil
+}
+
+func (u TestUsersRepository) UpdateUserData(id string, data *models.UserData) error {
+	_, ok := u.passwords[id]
+	if !ok {
+		return errors.New("user not found")
+	}
+
+	u.data[id] = *data
+	return nil
+}
+
+func (u TestUsersRepository) Password(id string) (string, error) {
+	pass, ok := u.passwords[id]
+	if !ok {
+		return "", errors.New("user not found")
+	}
+	return pass, nil
+}
+
+func (u TestUsersRepository) UserData(id string) (*models.UserData, error) {
+	data, ok := u.data[id]
 	if !ok {
 		return nil, errors.New("user not found")
 	}
-
-	return &TestUsersStorageTxn{
-		storage:  u,
-		id:       id,
-		password: pwd,
-		data:     u.data[id],
-	}, nil
-}
-
-func (t *TestUsersStorageTxn) Commit() error {
-	t.storage.passwords[t.id] = t.password
-	t.storage.data[t.id] = t.data
-	return nil
-}
-
-func (t *TestUsersStorageTxn) Rollback() {
-
-}
-
-func (t *TestUsersStorageTxn) UpdatePassword(password string) {
-	t.password = password
-}
-
-func (t *TestUsersStorageTxn) UpdateUserData(data *models.UserData) {
-	t.data = *data
-}
-
-func (t *TestUsersStorageTxn) MatchPassword(password string) bool {
-	return t.password == password
-}
-
-func (t *TestUsersStorageTxn) UserData() *models.UserData {
-	return &t.data
+	return &data, nil
 }
 
 func Test_TestUserStorage(t *testing.T) {

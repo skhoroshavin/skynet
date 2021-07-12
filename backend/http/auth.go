@@ -18,8 +18,8 @@ func attachAuth(e *gin.Engine, auth api.Auth) {
 }
 
 type UserCredentials struct {
-	ID       string   `json:"id" binding:"required"`
-	Password string   `json:"password" binding:"required"`
+	ID       string `json:"id" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (a Auth) signup(c *gin.Context) {

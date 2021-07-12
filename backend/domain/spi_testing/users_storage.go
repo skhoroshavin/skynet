@@ -11,142 +11,151 @@ import (
 func UsersStorageTestSuite(t *testing.T, storage spi.UsersStorage) {
 	t.Run("insert user", func(t *testing.T) {
 		t.Run("can insert new user", func(t *testing.T) {
-			err := storage.Insert("john", "easy")
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				return users.Insert("john", "easy")
+			})
 			assert.Nil(t, err)
 		})
 
 		t.Run("cannot insert duplicate user even with same password", func(t *testing.T) {
-			err := storage.Insert("john", "easy")
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				return users.Insert("john", "easy")
+			})
 			assert.Error(t, err)
 		})
 
 		t.Run("cannot insert duplicate user", func(t *testing.T) {
-			err := storage.Insert("john", "peasy")
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				return users.Insert("john", "peasy")
+			})
 			assert.Error(t, err)
 		})
 	})
 
-	t.Run("transaction", func(t *testing.T) {
-		t.Run("can start transaction for existing user", func(t *testing.T) {
-			txn, err := storage.Transaction("john")
+	t.Run("password", func(t *testing.T) {
+		t.Run("password returns user password", func(t *testing.T) {
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				password, err := users.Password("john")
+				assert.Equal(t, "easy", password)
+				return err
+			})
 			assert.Nil(t, err)
-			txn.Rollback()
 		})
 
-		t.Run("cannot start transaction for non-existent user", func(t *testing.T) {
-			_, err := storage.Transaction("ripper")
-			assert.Error(t, err)
+		t.Run("update password updates user password", func(t *testing.T) {
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				err := users.UpdatePassword("john", "peasy")
+				if !assert.Nil(t, err) {
+					return err
+				}
+
+				password, err := users.Password("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
+
+				assert.Equal(t, "peasy", password)
+				return nil
+			})
+			assert.Nil(t, err)
 		})
+	})
 
-		t.Run("password", func(t *testing.T) {
-			t.Run("match password returns whether password is correct", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				defer txn.Rollback()
+	t.Run("user data", func(t *testing.T) {
+		t.Run("user data for new user is empty", func(t *testing.T) {
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				data, err := users.UserData("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
 
-				assert.True(t, txn.MatchPassword("easy"))
-				assert.False(t, txn.MatchPassword("peasy"))
-			})
-
-			t.Run("update password effects are visible within transaction", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				defer txn.Rollback()
-
-				txn.UpdatePassword("peasy")
-
-				assert.False(t, txn.MatchPassword("easy"))
-				assert.True(t, txn.MatchPassword("peasy"))
-			})
-
-			t.Run("effects of transaction without commit are not visible", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				defer txn.Rollback()
-
-				assert.True(t, txn.MatchPassword("easy"))
-				assert.False(t, txn.MatchPassword("peasy"))
-			})
-
-			t.Run("updates are visible to subsequent transactions after commit", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				txn.UpdatePassword("peasy")
-				assert.Nil(t, txn.Commit())
-
-				txn, _ = storage.Transaction("john")
-				defer txn.Rollback()
-
-				assert.False(t, txn.MatchPassword("easy"))
-				assert.True(t, txn.MatchPassword("peasy"))
-			})
-		})
-
-		t.Run("user data", func(t *testing.T) {
-			t.Run("user data for new user is empty", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				defer txn.Rollback()
-
-				data := txn.UserData()
-
-				assert.NotNil(t, data)
 				assert.Empty(t, data.FirstName)
 				assert.Empty(t, data.LastName)
 				assert.Nil(t, data.Birthday)
 				assert.Equal(t, models.GenderUndefined, data.Gender)
 				assert.Empty(t, data.City)
 				assert.Empty(t, data.Interests)
+				return nil
 			})
+			assert.Nil(t, err)
+		})
 
-			t.Run("user data can be fully updated", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
+		t.Run("user data can be fully updated", func(t *testing.T) {
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
 				time := time.Date(1983, 11, 18, 0, 0, 0, 0, time.UTC)
-				data := &models.UserData{
+				storedData := &models.UserData{
 					FirstName: "John",
 					LastName:  "Doe",
 					Birthday:  &time,
-					Gender:    3,
+					Gender:    models.GenderMale,
 					City:      "New Vegas",
 					Interests: "Dismantling cyborgs",
 				}
-				txn.UpdateUserData(data)
-				assert.Nil(t, txn.Commit())
 
-				txn, _ = storage.Transaction("john")
-				defer txn.Rollback()
-				updatedData := txn.UserData()
+				err := users.UpdateUserData("john", storedData)
+				if !assert.Nil(t, err) {
+					return err
+				}
 
-				assert.NotNil(t, updatedData)
-				assert.Equal(t, *data, *updatedData)
+				retrievedData, err := users.UserData("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
+
+				assert.EqualValues(t, storedData, retrievedData)
+				return nil
 			})
+			assert.Nil(t, err)
+		})
 
-			t.Run("user data can be partially updated", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				data := *txn.UserData()
+		t.Run("user data can be partially updated", func(t *testing.T) {
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				data, err := users.UserData("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
+
 				data.FirstName = "Jonny"
 				data.LastName = "B"
-				txn.UpdateUserData(&data)
-				assert.Nil(t, txn.Commit())
+				err = users.UpdateUserData("john", data)
+				if !assert.Nil(t, err) {
+					return err
+				}
 
-				txn, _ = storage.Transaction("john")
-				defer txn.Rollback()
-				updatedData := txn.UserData()
+				updatedData, err := users.UserData("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
+				assert.EqualValues(t, data, updatedData)
 
-				assert.NotNil(t, updatedData)
-				assert.Equal(t, data, *updatedData)
+				return nil
 			})
+			assert.Nil(t, err)
+		})
 
-			t.Run("user data fields can be reset", func(t *testing.T) {
-				txn, _ := storage.Transaction("john")
-				data := *txn.UserData()
+		t.Run("user data fields can be reset", func(t *testing.T) {
+			err := spi.Transactional(storage, func(users spi.UsersRepository) error {
+				data, err := users.UserData("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
+
 				data.Birthday = nil
 				data.Gender = models.GenderUndefined
-				txn.UpdateUserData(&data)
-				assert.Nil(t, txn.Commit())
+				err = users.UpdateUserData("john", data)
+				if !assert.Nil(t, err) {
+					return err
+				}
 
-				txn, _ = storage.Transaction("john")
-				defer txn.Rollback()
-				updatedData := txn.UserData()
+				updatedData, err := users.UserData("john")
+				if !assert.Nil(t, err) {
+					return err
+				}
+				assert.Equal(t, *data, *updatedData)
 
-				assert.NotNil(t, updatedData)
-				assert.Equal(t, data, *updatedData)
+				return nil
 			})
+			assert.Nil(t, err)
 		})
 	})
 }
