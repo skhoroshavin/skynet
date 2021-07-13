@@ -21,8 +21,8 @@ func (a AuthService) SignUp(id string, password string) (string, error) {
 	}
 
 	var session string
-	err := a.storage.Transaction(func(sd spi.StorageData) error {
-		err := sd.Users.Insert(id, password)
+	err := a.storage.Transaction(func(r spi.Repositories) error {
+		err := r.Users().Insert(id, password)
 		if err != nil {
 			return err
 		}
@@ -43,8 +43,8 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 		return errors.New("password cannot be empty")
 	}
 
-	return a.storage.Transaction(func(sd spi.StorageData) error {
-		password, err := sd.Users.Password(id)
+	return a.storage.Transaction(func(r spi.Repositories) error {
+		password, err := r.Users().Password(id)
 		if err != nil {
 			return err
 		}
@@ -53,6 +53,6 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 			return errors.New("invalid old password")
 		}
 
-		return sd.Users.UpdatePassword(id, newPassword)
+		return r.Users().UpdatePassword(id, newPassword)
 	})
 }

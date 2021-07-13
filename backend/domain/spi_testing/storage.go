@@ -11,22 +11,22 @@ import (
 func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 	t.Run("insert user", func(t *testing.T) {
 		t.Run("can insert new user", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				return sd.Users.Insert("john", "easy")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				return r.Users().Insert("john", "easy")
 			})
 			assert.Nil(t, err)
 		})
 
 		t.Run("cannot insert duplicate user even with same password", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				return sd.Users.Insert("john", "easy")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				return r.Users().Insert("john", "easy")
 			})
 			assert.Error(t, err)
 		})
 
 		t.Run("cannot insert duplicate user", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				return sd.Users.Insert("john", "peasy")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				return r.Users().Insert("john", "peasy")
 			})
 			assert.Error(t, err)
 		})
@@ -34,8 +34,8 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 
 	t.Run("password", func(t *testing.T) {
 		t.Run("password returns user password", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				password, err := sd.Users.Password("john")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				password, err := r.Users().Password("john")
 				assert.Equal(t, "easy", password)
 				return err
 			})
@@ -43,13 +43,13 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 		})
 
 		t.Run("update password updates user password", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				err := sd.Users.UpdatePassword("john", "peasy")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				err := r.Users().UpdatePassword("john", "peasy")
 				if !assert.Nil(t, err) {
 					return err
 				}
 
-				password, err := sd.Users.Password("john")
+				password, err := r.Users().Password("john")
 				if !assert.Nil(t, err) {
 					return err
 				}
@@ -63,8 +63,8 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 
 	t.Run("user data", func(t *testing.T) {
 		t.Run("user data for new user is empty", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				data, err := sd.Users.UserData("john")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				data, err := r.Users().UserData("john")
 				if !assert.Nil(t, err) {
 					return err
 				}
@@ -81,7 +81,7 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 		})
 
 		t.Run("user data can be fully updated", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
+			err := storage.Transaction(func(r spi.Repositories) error {
 				time := time.Date(1983, 11, 18, 0, 0, 0, 0, time.UTC)
 				storedData := &models.UserData{
 					FirstName: "John",
@@ -92,12 +92,12 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 					Interests: "Dismantling cyborgs",
 				}
 
-				err := sd.Users.UpdateUserData("john", storedData)
+				err := r.Users().UpdateUserData("john", storedData)
 				if !assert.Nil(t, err) {
 					return err
 				}
 
-				retrievedData, err := sd.Users.UserData("john")
+				retrievedData, err := r.Users().UserData("john")
 				if !assert.Nil(t, err) {
 					return err
 				}
@@ -109,20 +109,20 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 		})
 
 		t.Run("user data can be partially updated", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				data, err := sd.Users.UserData("john")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				data, err := r.Users().UserData("john")
 				if !assert.Nil(t, err) {
 					return err
 				}
 
 				data.FirstName = "Jonny"
 				data.LastName = "B"
-				err = sd.Users.UpdateUserData("john", data)
+				err = r.Users().UpdateUserData("john", data)
 				if !assert.Nil(t, err) {
 					return err
 				}
 
-				updatedData, err := sd.Users.UserData("john")
+				updatedData, err := r.Users().UserData("john")
 				if !assert.Nil(t, err) {
 					return err
 				}
@@ -134,20 +134,20 @@ func UsersStorageTestSuite(t *testing.T, storage spi.Storage) {
 		})
 
 		t.Run("user data fields can be reset", func(t *testing.T) {
-			err := storage.Transaction(func(sd spi.StorageData) error {
-				data, err := sd.Users.UserData("john")
+			err := storage.Transaction(func(r spi.Repositories) error {
+				data, err := r.Users().UserData("john")
 				if !assert.Nil(t, err) {
 					return err
 				}
 
 				data.Birthday = nil
 				data.Gender = models.GenderUndefined
-				err = sd.Users.UpdateUserData("john", data)
+				err = r.Users().UpdateUserData("john", data)
 				if !assert.Nil(t, err) {
 					return err
 				}
 
-				updatedData, err := sd.Users.UserData("john")
+				updatedData, err := r.Users().UserData("john")
 				if !assert.Nil(t, err) {
 					return err
 				}

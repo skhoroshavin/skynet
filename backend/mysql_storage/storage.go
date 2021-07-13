@@ -11,6 +11,10 @@ type Storage struct {
 	db *sql.DB
 }
 
+type Repositories struct {
+	tx *sql.Tx
+}
+
 func NewStorage(config *DBConfig) (*Storage, error) {
 	db, err := sql.Open("mysql", config.mysqlDsn())
 	if err != nil {
@@ -22,17 +26,13 @@ func NewStorage(config *DBConfig) (*Storage, error) {
 	}, nil
 }
 
-func (s Storage) Transaction(wrk func(sd spi.StorageData) error) error {
+func (s Storage) Transaction(wrk func(r spi.Repositories) error) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
 	}
 
-	sd := spi.StorageData{
-		Users: newUsers(tx),
-	}
-
-	err = wrk(sd)
+	err = wrk(Repositories{tx})
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -46,4 +46,8 @@ func (s Storage) CreateSchema() error {
 		return err
 	}
 	return nil
+}
+
+func (r Repositories) Users() spi.UsersRepository {
+	return Users{r.tx}
 }

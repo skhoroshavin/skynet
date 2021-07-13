@@ -16,15 +16,15 @@ func NewUserService(storage spi.Storage) UserService {
 }
 
 func (u UserService) UpdateUserData(id string, data *models.UserData) error {
-	return u.storage.Transaction(func(sd spi.StorageData) error {
-		return sd.Users.UpdateUserData(id, data)
+	return u.storage.Transaction(func(r spi.Repositories) error {
+		return r.Users().UpdateUserData(id, data)
 	})
 }
 
 func (u UserService) UserData(id string) (*models.UserData, error) {
 	var result *models.UserData
-	err := u.storage.Transaction(func(sd spi.StorageData) error {
-		res, err := sd.Users.UserData(id)
+	err := u.storage.Transaction(func(r spi.Repositories) error {
+		res, err := r.Users().UserData(id)
 		if err == nil {
 			result = res
 		}

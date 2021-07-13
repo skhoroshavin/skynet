@@ -1,9 +1,9 @@
 package spi
 
-type StorageData struct {
-	Users UsersRepository
+type Storage interface {
+	Transaction(wrk func(r Repositories) error) error
 }
 
-type Storage interface {
-	Transaction(wrk func(sd StorageData) error) error
+type Repositories interface {
+	Users() UsersRepository
 }

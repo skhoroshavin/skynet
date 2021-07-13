@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"skynet/domain/models"
-	"skynet/domain/spi"
 	"skynet/domain/spi_testing"
 	"testing"
 )
@@ -63,35 +62,6 @@ func (u TestUsersRepository) UserData(id string) (*models.UserData, error) {
 		return nil, errors.New("user not found")
 	}
 	return &data, nil
-}
-
-
-type TestStorage struct {
-	users TestUsersRepository
-}
-
-func testStorage() *TestStorage {
-	r := &TestStorage{}
-	r.reset()
-	return r
-}
-
-func (s *TestStorage) reset() {
-	s.users.reset()
-}
-
-func (s *TestStorage) Transaction(wrk func(sd spi.StorageData) error) error {
-	sd := spi.StorageData{
-		Users: s.users,
-	}
-
-	err := wrk(sd)
-	if err != nil {
-		return err
-	}
-
-	s.users = sd.Users.(TestUsersRepository)
-	return nil
 }
 
 func Test_TestUserStorage(t *testing.T) {
