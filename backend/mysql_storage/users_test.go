@@ -11,7 +11,7 @@ func TestUsers(t *testing.T) {
 	assert.Nil(t, err)
 	defer dropTestDatabase(config)
 
-	storage, err := NewMySqlStorage(config)
+	storage, err := NewStorage(config)
 	assert.Nil(t, err)
 
 	if !assert.Nil(t, storage.CreateSchema()) {

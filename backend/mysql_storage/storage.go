@@ -11,7 +11,7 @@ type Storage struct {
 	db *sql.DB
 }
 
-func NewMySqlStorage(config *DBConfig) (*Storage, error) {
+func NewStorage(config *DBConfig) (*Storage, error) {
 	db, err := sql.Open("mysql", config.mysqlDsn())
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %s", err)
@@ -22,8 +22,8 @@ func NewMySqlStorage(config *DBConfig) (*Storage, error) {
 	}, nil
 }
 
-func (d Storage) Transaction(wrk func(sd spi.StorageData) error) error {
-	tx, err := d.db.Begin()
+func (s Storage) Transaction(wrk func(sd spi.StorageData) error) error {
+	tx, err := s.db.Begin()
 	if err != nil {
 		return err
 	}
@@ -41,8 +41,8 @@ func (d Storage) Transaction(wrk func(sd spi.StorageData) error) error {
 	return tx.Commit()
 }
 
-func (d Storage) CreateSchema() error {
-	if err := createUsersSchema(d.db); err != nil {
+func (s Storage) CreateSchema() error {
+	if err := createUsersSchema(s.db); err != nil {
 		return err
 	}
 	return nil

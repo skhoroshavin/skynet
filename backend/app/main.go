@@ -8,13 +8,13 @@ import (
 )
 
 func main() {
-	db, err := mysql_storage.NewMySqlStorage(mysql_storage.EnvConfig())
+	storage, err := mysql_storage.NewStorage(mysql_storage.EnvConfig())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	authSvc := services.NewAuthService(db)
-	usersSvc := services.NewUserService(db)
+	authSvc := services.NewAuthService(storage)
+	usersSvc := services.NewUserService(storage)
 
 	server := http.NewServer(authSvc, usersSvc)
 
