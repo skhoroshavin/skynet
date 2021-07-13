@@ -42,8 +42,7 @@ func sessionID(res *httptest.ResponseRecorder) (string, error) {
 
 func TestAuthSignUp(t *testing.T) {
 	s := newTestServer()
-	s.auth.On("CreateUser", "john", "easy").Return(nil)
-	s.auth.On("CreateSession", "john").Return("some_session_id", nil)
+	s.auth.On("SignUp", "john", "easy").Return("some_session_id", nil)
 
 	body := `{"id": "john", "password": "easy"}`
 	req := httptest.NewRequest("POST", "/auth/signup", strings.NewReader(body))

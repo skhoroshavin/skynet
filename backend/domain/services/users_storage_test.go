@@ -8,45 +8,14 @@ import (
 	"testing"
 )
 
-type TestUsersStorage struct {
+type TestUsersRepository struct {
 	passwords map[string]string
 	data      map[string]models.UserData
 }
 
-func newTestUsersStorage() *TestUsersStorage {
-	r := &TestUsersStorage{}
-	r.reset()
-	return r
-}
-
-func (u *TestUsersStorage) reset() {
+func (u *TestUsersRepository) reset() {
 	u.passwords = map[string]string{}
 	u.data = map[string]models.UserData{}
-}
-
-func (u *TestUsersStorage) Begin() (spi.UsersRepository, error) {
-	return TestUsersRepository{
-		storage: u,
-		passwords: u.passwords,
-		data: u.data,
-	}, nil
-}
-
-type TestUsersRepository struct {
-	storage *TestUsersStorage
-
-	passwords map[string]string
-	data      map[string]models.UserData
-}
-
-func (u TestUsersRepository) Save() error {
-	u.storage.passwords = u.passwords
-	u.storage.data = u.data
-	return nil
-}
-
-func (u TestUsersRepository) Cancel() {
-
 }
 
 func (u TestUsersRepository) Insert(id string, password string) error {
@@ -96,6 +65,35 @@ func (u TestUsersRepository) UserData(id string) (*models.UserData, error) {
 	return &data, nil
 }
 
+
+type TestStorage struct {
+	users TestUsersRepository
+}
+
+func testStorage() *TestStorage {
+	r := &TestStorage{}
+	r.reset()
+	return r
+}
+
+func (s *TestStorage) reset() {
+	s.users.reset()
+}
+
+func (s *TestStorage) Transaction(wrk func(sd spi.StorageData) error) error {
+	sd := spi.StorageData{
+		Users: s.users,
+	}
+
+	err := wrk(sd)
+	if err != nil {
+		return err
+	}
+
+	s.users = sd.Users.(TestUsersRepository)
+	return nil
+}
+
 func Test_TestUserStorage(t *testing.T) {
-	spi_testing.UsersStorageTestSuite(t, newTestUsersStorage())
+	spi_testing.UsersStorageTestSuite(t, testStorage())
 }

@@ -1,72 +1,47 @@
-package storage
+package mysql_storage
 
 import (
 	"database/sql"
-	"log"
 	"skynet/domain/models"
-	"skynet/domain/spi"
 )
 
 type Users struct {
-	db *sql.DB
-}
-
-type UsersRepository struct {
 	tx *sql.Tx
 }
 
-func newUsers(db *sql.DB) *Users {
-	return &Users{
-		db: db,
+func newUsers(tx *sql.Tx) Users {
+	return Users{
+		tx: tx,
 	}
 }
 
-func (u Users) createSchema() error {
-	_, err := u.db.Exec(`
+func createUsersSchema(db *sql.DB) error {
+	_, err := db.Exec(`
         create table users (
-            id         varchar(30) primary key, 
-            password   varchar(30),
-            first_name varchar(30) not null default "",
-            last_name  varchar(30) not null default "",
+            id         varchar(64) primary key, 
+            password   varchar(64),
+            first_name varchar(64) not null default "",
+            last_name  varchar(64) not null default "",
             birthday   date,
             gender     enum('undefined', 'male', 'female') not null default "undefined",
-            city       varchar(30) not null default "",
+            city       varchar(64) not null default "",
             interests  text
         );
     `)
 	return err
 }
 
-func (u Users) Begin() (spi.UsersRepository, error) {
-	tx, err := u.db.Begin()
-	if err != nil {
-		return nil, err
-	}
-	return &UsersRepository{tx}, nil
-}
-
-func (u UsersRepository) Save() error {
-	return u.tx.Commit()
-}
-
-func (u UsersRepository) Cancel() {
-	err := u.tx.Rollback()
-	if err != nil {
-		log.Printf("Failed to rollback transaction: %s", err)
-	}
-}
-
-func (u UsersRepository) Insert(id string, password string) error {
+func (u Users) Insert(id string, password string) error {
 	_, err := u.tx.Exec("insert into users(id, password) values (?, ?)", id, password)
 	return err
 }
 
-func (u UsersRepository) UpdatePassword(id string, password string) error {
+func (u Users) UpdatePassword(id string, password string) error {
 	_, err := u.tx.Exec("update users set password = ? where id = ?", password, id)
 	return err
 }
 
-func (u UsersRepository) UpdateUserData(id string, data *models.UserData) error {
+func (u Users) UpdateUserData(id string, data *models.UserData) error {
 	_, err := u.tx.Exec("update users set "+
 		"first_name = ?, "+
 		"last_name = ?, "+
@@ -85,7 +60,7 @@ func (u UsersRepository) UpdateUserData(id string, data *models.UserData) error 
 	return err
 }
 
-func (u UsersRepository) Password(id string) (string, error) {
+func (u Users) Password(id string) (string, error) {
 	var password string
 	err := u.tx.QueryRow("select password from users where id = ?", id).Scan(&password)
 	if err != nil {
@@ -94,7 +69,7 @@ func (u UsersRepository) Password(id string) (string, error) {
 	return password, nil
 }
 
-func (u UsersRepository) UserData(id string) (*models.UserData, error) {
+func (u Users) UserData(id string) (*models.UserData, error) {
 	var firstName, lastName, genderS, city string
 	var birthdayN sql.NullTime
 	var interestsN sql.NullString
@@ -107,13 +82,13 @@ func (u UsersRepository) UserData(id string) (*models.UserData, error) {
 		"city, "+
 		"interests "+
 		"from users where id = ?", id).Scan(
-			&firstName,
-			&lastName,
-			&birthdayN,
-			&genderS,
-			&city,
-			&interestsN,
-		)
+		&firstName,
+		&lastName,
+		&birthdayN,
+		&genderS,
+		&city,
+		&interestsN,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +110,7 @@ func (u UsersRepository) UserData(id string) (*models.UserData, error) {
 
 	interests := interestsN.String
 	if !interestsN.Valid {
-	 	interests = ""
+		interests = ""
 	}
 
 	return &models.UserData{

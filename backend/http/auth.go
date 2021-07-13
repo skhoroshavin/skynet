@@ -29,17 +29,12 @@ func (a Auth) signup(c *gin.Context) {
 		return
 	}
 
-	if err := a.auth.CreateUser(credentials.ID, credentials.Password); err != nil {
+	sessionID, err := a.auth.SignUp(credentials.ID, credentials.Password)
+	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 
-	sessionID, err := a.auth.CreateSession(credentials.ID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(200, gin.H{"id": "john"})
+	c.JSON(200, gin.H{"id": credentials.ID})
 	c.SetCookie("sessionid", sessionID, 0, "/", "", true, true)
 }

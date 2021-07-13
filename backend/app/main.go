@@ -4,17 +4,17 @@ import (
 	"log"
 	"skynet/domain/services"
 	"skynet/http"
-	"skynet/storage"
+	"skynet/mysql_storage"
 )
 
 func main() {
-	db, err := storage.NewDatabase(storage.EnvConfig())
+	db, err := mysql_storage.NewMySqlStorage(mysql_storage.EnvConfig())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	authSvc := services.NewAuthService(db.Users())
-	usersSvc := services.NewUserService(db.Users())
+	authSvc := services.NewAuthService(db)
+	usersSvc := services.NewUserService(db)
 
 	server := http.NewServer(authSvc, usersSvc)
 

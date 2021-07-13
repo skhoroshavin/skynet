@@ -6,25 +6,25 @@ import (
 )
 
 type UserService struct {
-	storage spi.UsersStorage
+	storage spi.Storage
 }
 
-func NewUserService(users spi.UsersStorage) UserService {
+func NewUserService(storage spi.Storage) UserService {
 	return UserService{
-		storage: users,
+		storage: storage,
 	}
 }
 
 func (u UserService) UpdateUserData(id string, data *models.UserData) error {
-	return spi.Transactional(u.storage, func(users spi.UsersRepository) error {
-		return users.UpdateUserData(id, data)
+	return u.storage.Transaction(func(sd spi.StorageData) error {
+		return sd.Users.UpdateUserData(id, data)
 	})
 }
 
 func (u UserService) UserData(id string) (*models.UserData, error) {
 	var result *models.UserData
-	err := spi.Transactional(u.storage, func(users spi.UsersRepository) error {
-		res, err := users.UserData(id)
+	err := u.storage.Transaction(func(sd spi.StorageData) error {
+		res, err := sd.Users.UserData(id)
 		if err == nil {
 			result = res
 		}

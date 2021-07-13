@@ -6,23 +6,36 @@ import (
 )
 
 type AuthService struct {
-	users spi.UsersStorage
+	storage spi.Storage
 }
 
-func NewAuthService(users spi.UsersStorage) AuthService {
+func NewAuthService(storage spi.Storage) AuthService {
 	return AuthService{
-		users: users,
+		storage: storage,
 	}
 }
 
-func (a AuthService) CreateUser(id string, password string) error {
+func (a AuthService) SignUp(id string, password string) (string, error) {
 	if len(password) < 1 {
-		return errors.New("password cannot be empty")
+		return "", errors.New("password cannot be empty")
 	}
 
-	return spi.Transactional(a.users, func(users spi.UsersRepository) error {
-		return users.Insert(id, password)
+	var session string
+	err := a.storage.Transaction(func(sd spi.StorageData) error {
+		err := sd.Users.Insert(id, password)
+		if err != nil {
+			return err
+		}
+
+		// TODO: Implement session creation
+		//session, err = data.Sessions.Create()
+		return err
 	})
+	if err != nil {
+		return "", err
+	}
+
+	return session, nil
 }
 
 func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword string) error {
@@ -30,8 +43,8 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 		return errors.New("password cannot be empty")
 	}
 
-	return spi.Transactional(a.users, func(users spi.UsersRepository) error {
-		password, err := users.Password(id)
+	return a.storage.Transaction(func(sd spi.StorageData) error {
+		password, err := sd.Users.Password(id)
 		if err != nil {
 			return err
 		}
@@ -40,10 +53,6 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 			return errors.New("invalid old password")
 		}
 
-		return users.UpdatePassword(id, newPassword)
+		return sd.Users.UpdatePassword(id, newPassword)
 	})
-}
-
-func (a AuthService) CreateSession(id string) (string, error) {
-	panic("not implemented")
 }

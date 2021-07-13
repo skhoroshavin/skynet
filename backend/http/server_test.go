@@ -14,19 +14,14 @@ type AuthServiceMock struct {
 	mock.Mock
 }
 
-func (m *AuthServiceMock) CreateUser(id string, password string) error {
+func (m *AuthServiceMock) SignUp(id string, password string) (string, error) {
 	args := m.Called(id, password)
-	return args.Error(0)
+	return args.String(0), args.Error(1)
 }
 
 func (m *AuthServiceMock) UpdatePassword(id string, oldPassword string, newPassword string) error {
 	args := m.Called(id, oldPassword, newPassword)
 	return args.Error(0)
-}
-
-func (m *AuthServiceMock) CreateSession(id string) (string, error) {
-	args := m.Called(id)
-	return args.String(0), args.Error(1)
 }
 
 type UsersServiceMock struct {

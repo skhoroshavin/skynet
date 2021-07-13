@@ -1,4 +1,4 @@
-package storage
+package mysql_storage
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -11,12 +11,12 @@ func TestUsers(t *testing.T) {
 	assert.Nil(t, err)
 	defer dropTestDatabase(config)
 
-	db, err := NewDatabase(config)
+	storage, err := NewMySqlStorage(config)
 	assert.Nil(t, err)
 
-	if !assert.Nil(t, db.CreateSchema()) {
+	if !assert.Nil(t, storage.CreateSchema()) {
 		return
 	}
 
-	spi_testing.UsersStorageTestSuite(t, db.Users())
+	spi_testing.UsersStorageTestSuite(t, storage)
 }
