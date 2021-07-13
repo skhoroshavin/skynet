@@ -6,4 +6,5 @@ type Storage interface {
 
 type Repositories interface {
 	Users() UsersRepository
+	Sessions() SessionsRepository
 }

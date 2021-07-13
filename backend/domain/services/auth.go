@@ -38,6 +38,10 @@ func (a AuthService) SignUp(id string, password string) (string, error) {
 	return session, nil
 }
 
+func (a AuthService) UserID(session string) (string, error) {
+	panic("implement me")
+}
+
 func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword string) error {
 	if len(newPassword) < 1 {
 		return errors.New("password cannot be empty")

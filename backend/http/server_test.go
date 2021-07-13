@@ -19,6 +19,11 @@ func (m *AuthServiceMock) SignUp(id string, password string) (string, error) {
 	return args.String(0), args.Error(1)
 }
 
+func (m *AuthServiceMock) UserID(session string) (string, error) {
+	args := m.Called(session)
+	return args.String(0), args.Error(1)
+}
+
 func (m *AuthServiceMock) UpdatePassword(id string, oldPassword string, newPassword string) error {
 	args := m.Called(id, oldPassword, newPassword)
 	return args.Error(0)

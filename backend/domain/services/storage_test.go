@@ -2,16 +2,29 @@ package services
 
 import "skynet/domain/spi"
 
+type TestSessionsRepository struct {
+}
+
+func (t TestSessionsRepository) CreateSession(id string) string {
+	panic("implement me")
+}
+
 type TestRepositories struct {
-	users TestUsersRepository
+	users    TestUsersRepository
+	sessions TestSessionsRepository
 }
 
 func (r TestRepositories) Users() spi.UsersRepository {
 	return &r.users
 }
 
+func (r TestRepositories) Sessions() spi.SessionsRepository {
+	return &r.sessions
+}
+
 type TestStorage struct {
-	users TestUsersRepository
+	users    TestUsersRepository
+	sessions TestSessionsRepository
 }
 
 func testStorage() *TestStorage {
@@ -27,6 +40,7 @@ func (s *TestStorage) reset() {
 func (s *TestStorage) Transaction(wrk func(r spi.Repositories) error) error {
 	r := TestRepositories{
 		s.users,
+		s.sessions,
 	}
 
 	err := wrk(r)

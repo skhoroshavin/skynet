@@ -51,3 +51,7 @@ func (s Storage) CreateSchema() error {
 func (r Repositories) Users() spi.UsersRepository {
 	return Users{r.tx}
 }
+
+func (r Repositories) Sessions() spi.SessionsRepository {
+	return Sessions{r.tx}
+}
