@@ -1,9 +1,0 @@
-version: "3.3"
-services:
-  skynet_db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: dev
-      MYSQL_DATABASE: skynet
-      MYSQL_USER: backend
-      MYSQL_PASSWORD: dev

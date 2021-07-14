@@ -1,5 +1,8 @@
 package spi
 
 type SessionsRepository interface {
-	CreateSession(id string) string
+	Insert(session string, id string) error
+	Delete(session string) error
+
+	UserID(session string) (string, error)
 }

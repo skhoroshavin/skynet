@@ -5,16 +5,16 @@ import (
 	"os"
 )
 
-type DBConfig struct {
+type Config struct {
 	HostName string
 	UserName string
 	Password string
 	DBName   string
 }
 
-func EnvConfig() *DBConfig {
-	r := &DBConfig{
-		HostName: "skynet_db",
+func EnvConfig() *Config {
+	r := &Config{
+		HostName: "localhost",
 		UserName: "root",
 		Password: "dev",
 		DBName:   "skynet",
@@ -43,6 +43,6 @@ func EnvConfig() *DBConfig {
 	return r
 }
 
-func (c DBConfig) mysqlDsn() string {
+func (c Config) mysqlDsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", c.UserName, c.Password, c.HostName, c.DBName)
 }

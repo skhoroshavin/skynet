@@ -17,6 +17,7 @@ func main() {
 	authSvc := services.NewAuthService(storage)
 	usersSvc := services.NewUserService(storage)
 
-	server := http.NewServer(authSvc, usersSvc)
+	httpConf := http.EnvConfig()
+	server := http.NewServer(httpConf, authSvc, usersSvc)
 	log.Fatal(server.Run())
 }

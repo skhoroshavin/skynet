@@ -7,13 +7,12 @@ import (
 )
 
 type Auth struct {
-	auth api.Auth
+	config *Config
+	auth   api.Auth
 }
 
-func attachAuth(e *gin.Engine, auth api.Auth) {
-	a := Auth{
-		auth: auth,
-	}
+func attachAuth(e *gin.Engine, config *Config, auth api.Auth) {
+	a := Auth{config, auth}
 	e.POST("/auth/signup", a.signup)
 }
 
@@ -25,16 +24,17 @@ type UserCredentials struct {
 func (a Auth) signup(c *gin.Context) {
 	var credentials UserCredentials
 	if err := c.BindJSON(&credentials); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
 
 	sessionID, err := a.auth.SignUp(credentials.ID, credentials.Password)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, gin.H{"err": err.Error()})
 		return
 	}
 
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("sessionid", sessionID, 0, "/", a.config.DomainName, true, true)
 	c.JSON(200, gin.H{"id": credentials.ID})
-	c.SetCookie("sessionid", sessionID, 0, "/", "", true, true)
 }

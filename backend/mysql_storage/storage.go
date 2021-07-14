@@ -15,10 +15,15 @@ type Repositories struct {
 	tx *sql.Tx
 }
 
-func NewStorage(config *DBConfig) (*Storage, error) {
+func NewStorage(config *Config) (*Storage, error) {
 	db, err := sql.Open("mysql", config.mysqlDsn())
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %s", err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to database: %s", err)
 	}
 
 	return &Storage{
@@ -43,6 +48,9 @@ func (s Storage) Transaction(wrk func(r spi.Repositories) error) error {
 
 func (s Storage) CreateSchema() error {
 	if err := createUsersSchema(s.db); err != nil {
+		return err
+	}
+	if err := createSessionsSchema(s.db); err != nil {
 		return err
 	}
 	return nil

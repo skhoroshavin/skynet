@@ -6,7 +6,7 @@ import (
 	"skynet/domain/api"
 )
 
-func NewServer(auth api.Auth, users api.Users) *gin.Engine {
+func NewServer(config *Config, auth api.Auth, users api.Users) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	e := gin.Default()
 
@@ -14,7 +14,7 @@ func NewServer(auth api.Auth, users api.Users) *gin.Engine {
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
 	})
 
-	attachAuth(e, auth)
+	attachAuth(e, config, auth)
 	attachUsers(e, users)
 
 	return e

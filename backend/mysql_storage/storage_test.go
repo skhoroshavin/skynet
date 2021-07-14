@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func createTestDatabase() (*DBConfig, error) {
+func createTestDatabase() (*Config, error) {
 	config := EnvConfig()
 	config.DBName = ""
 
@@ -25,7 +25,7 @@ func createTestDatabase() (*DBConfig, error) {
 	return nil, fmt.Errorf("failed to create database in 20 attempts")
 }
 
-func dropTestDatabase(config *DBConfig) {
+func dropTestDatabase(config *Config) {
 	db, err := sql.Open("mysql", config.mysqlDsn())
 	if err != nil {
 		panic(fmt.Sprintf("failed to open database: %s", err))

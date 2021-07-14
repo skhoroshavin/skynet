@@ -1,2 +1,4 @@
 .idea/
 backend/app/app
+node_modules/
+.next/

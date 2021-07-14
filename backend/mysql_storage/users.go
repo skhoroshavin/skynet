@@ -9,12 +9,6 @@ type Users struct {
 	tx *sql.Tx
 }
 
-func newUsers(tx *sql.Tx) Users {
-	return Users{
-		tx: tx,
-	}
-}
-
 func createUsersSchema(db *sql.DB) error {
 	_, err := db.Exec(`
         create table users (
