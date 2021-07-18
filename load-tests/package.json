@@ -1,0 +1,9 @@
+{
+  "name": "skynet-load-test",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@types/k6": "^0.32.2",
+    "k6": "0.0.0"
+  }
+}
