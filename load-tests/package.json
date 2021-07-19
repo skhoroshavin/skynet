@@ -2,8 +2,21 @@
   "name": "skynet-load-test",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "build": "webpack",
+    "test": "k6 run build/index.js --compatibility-mode=base -i 10000 -u 100"
+  },
+  "engines": {},
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
     "@types/k6": "^0.32.2",
-    "k6": "0.0.0"
+    "babel-loader": "^8.2.2",
+    "k6": "0.0.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "faker": "^5.5.3"
   }
 }

@@ -49,5 +49,5 @@ func TestGetNonExistentUser(t *testing.T) {
 	res := s.serve(req)
 
 	assert.Equal(t, http.StatusNotFound, res.Code)
-	assert.JSONEq(t, `{"error": "getUser jonny not found"}`, res.Body.String())
+	assert.JSONEq(t, `{"err": "user \"jonny\" not found"}`, res.Body.String())
 }

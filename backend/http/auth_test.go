@@ -49,7 +49,7 @@ func TestAuthSignUp(t *testing.T) {
 	res := s.serve(req)
 
 	assert.Equal(t, http.StatusOK, res.Code)
-	assert.JSONEq(t, `{"id": "john"}`, res.Body.String())
+	assert.JSONEq(t, `{}`, res.Body.String())
 
 	sessionId, err := sessionID(res)
 	assert.Nil(t, err)

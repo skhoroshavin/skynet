@@ -2,9 +2,11 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"github.com/segmentio/ksuid"
 	"golang.org/x/crypto/bcrypt"
 	"skynet/domain/spi"
+	"unicode"
 )
 
 type AuthService struct {
@@ -17,9 +19,39 @@ func NewAuthService(storage spi.Storage) AuthService {
 	}
 }
 
-func (a AuthService) SignUp(id string, password string) (string, error) {
+func validateUserId(id string) error {
+	if len(id) < 1 {
+		return errors.New("user id cannot be empty")
+	}
+
+	if len(id) > 30 {
+		return errors.New("user id cannot be longer than 24 symbols")
+	}
+
+	for _, c := range id {
+		if !unicode.IsLetter(c) && !unicode.IsDigit(c) && c != '.' {
+			return fmt.Errorf("user id must be either letter or digit, got %v", id)
+		}
+	}
+
+	return nil
+}
+
+func validatePassword(password string) error {
 	if len(password) < 1 {
-		return "", errors.New("password cannot be empty")
+		return errors.New("password cannot be empty")
+	}
+
+	return nil
+}
+
+func (a AuthService) SignUp(id string, password string) (string, error) {
+	if err := validateUserId(id); err != nil {
+		return "", err
+	}
+
+	if err := validatePassword(password); err != nil {
+		return "", err
 	}
 
 	var session string
