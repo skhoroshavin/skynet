@@ -37,7 +37,7 @@ export function signup() {
     const gender = faker.datatype.number(1)
     const firstName = faker.name.firstName(gender)
     const lastName = faker.name.lastName(gender)
-    const id = `${simplify(firstName)}.${simplify(lastName)}${faker.random.alphaNumeric(2)}`
+    const id = `${simplify(firstName)}.${simplify(lastName)}${faker.random.alphaNumeric(4)}`
     const password = faker.random.alphaNumeric(faker.datatype.number({min: 6, max: 20}))
     let res
     group("signup new user", () => {

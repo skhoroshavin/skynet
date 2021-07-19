@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "webpack",
-    "test": "k6 run build/index.js --compatibility-mode=base -i 10000 -u 100"
+    "pretest": "webpack",
+    "test": "k6 run build/index.js --compatibility-mode=base -i 100000 -u 100"
   },
   "engines": {},
   "devDependencies": {

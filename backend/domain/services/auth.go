@@ -100,7 +100,7 @@ func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword s
 }
 
 func encryptPassword(password string) string {
-	res, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	res, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
 	if err != nil {
 		panic("failed to encrypt password")
 	}
