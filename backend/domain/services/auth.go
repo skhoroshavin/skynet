@@ -29,7 +29,7 @@ func validateUserId(id string) error {
 	}
 
 	for _, c := range id {
-		if !unicode.IsLetter(c) && !unicode.IsDigit(c) && c != '.' {
+		if !unicode.IsLetter(c) && !unicode.IsDigit(c) && c != '.' && c != '_' {
 			return fmt.Errorf("user id must be either letter or digit, got %v", id)
 		}
 	}
