@@ -55,6 +55,7 @@ export function fakeUser() {
     const firstName = faker.name.firstName(genderId)
     const lastName = faker.name.lastName(genderId)
     const gender = genderId == 0 ? "male" : "female"
+    const birthday = faker.date.between('1940-01-01', '2009-01-01')
     const city = faker.address.city()
 
     const id = userName(firstName, lastName)
@@ -63,9 +64,10 @@ export function fakeUser() {
     return {
         id: id,
         password: password,
-        firstName: faker.datatype.number(10) < 9 ? firstName : "",
-        lastName: faker.datatype.number(10) < 6 ? lastName : "",
-        gender: faker.datatype.number(10) < 9 ? gender : "",
-        city: faker.datatype.number(10) < 5 ? city : ""
+        firstName: faker.datatype.number(10) < 9 ? firstName : null,
+        lastName: faker.datatype.number(10) < 6 ? lastName : null,
+        gender: faker.datatype.number(10) < 9 ? gender : null,
+        birthday: faker.datatype.number(10) < 6 ? birthday : null,
+        city: faker.datatype.number(10) < 5 ? city : null
     }
 }

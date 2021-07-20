@@ -14,12 +14,12 @@ func createUsersSchema(db *sql.DB) error {
         create table users (
             id         varchar(64) primary key, 
             password   varchar(64),
-            first_name varchar(64) not null default "",
-            last_name  varchar(64) not null default "",
+            first_name varchar(64) character set utf8mb4 not null default "",
+            last_name  varchar(64) character set utf8mb4 not null default "",
             birthday   date,
             gender     enum('undefined', 'male', 'female') not null default "undefined",
-            city       varchar(64) not null default "",
-            interests  text
+            city       varchar(64) character set utf8mb4 not null default "",
+            interests  text character set utf8mb4 
         );
     `)
 	return err

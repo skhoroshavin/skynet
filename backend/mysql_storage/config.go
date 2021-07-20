@@ -44,5 +44,6 @@ func EnvConfig() *Config {
 }
 
 func (c Config) mysqlDsn() string {
-	return fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", c.UserName, c.Password, c.HostName, c.DBName)
+	return fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
+		c.UserName, c.Password, c.HostName, c.DBName)
 }
