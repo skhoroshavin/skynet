@@ -19,6 +19,7 @@ type UserCredentials struct {
 func attachAuth(e *gin.Engine, config *Config, auth api.Auth) {
 	a := Auth{config, auth}
 	e.POST("/auth/signup", a.signup)
+	e.GET("/auth/me", a.me)
 }
 
 func (a Auth) signup(c *gin.Context) {
@@ -37,4 +38,21 @@ func (a Auth) signup(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("sessionid", sessionID, 0, "/", a.config.DomainName, true, true)
 	c.JSON(200, gin.H{})
+}
+
+// TODO: Test me
+func (a Auth) me(c *gin.Context) {
+	sessionID, err := c.Cookie("sessionid")
+	if err != nil {
+		Error(c, http.StatusUnauthorized, err)
+		return
+	}
+
+	userID, err := a.auth.UserID(sessionID)
+	if err != nil {
+		Error(c, http.StatusUnauthorized, err)
+		return
+	}
+
+	c.JSON(200, gin.H{"id": userID})
 }

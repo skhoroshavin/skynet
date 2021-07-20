@@ -76,8 +76,18 @@ func (a AuthService) SignUp(id string, password string) (string, error) {
 	return session, nil
 }
 
+// TODO: Test me
 func (a AuthService) UserID(session string) (string, error) {
-	panic("implement me")
+	var userID string
+	err := a.storage.Transaction(func(r spi.Repositories) error {
+		var err error
+		userID, err = r.Sessions().UserID(session)
+		return err
+	})
+	if err != nil {
+		return "", err
+	}
+	return userID, nil
 }
 
 func (a AuthService) UpdatePassword(id string, oldPassword string, newPassword string) error {

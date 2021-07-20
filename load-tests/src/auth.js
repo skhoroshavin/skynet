@@ -8,10 +8,20 @@ export function signup(user) {
         password: user.password
     }))
     check(res, {
-        "signup returned status 200":
+        "returned status 200":
             (res) => res.status == 200,
-        "signup provided session id in a cookie":
-            (res) => res.cookies.sessionid != null
+        "provided session id in a cookie":
+            (res) => (res.cookies.sessionid != null),
+
+    })
+    return res
+}
+
+export function me() {
+    let res = http.get(`${API_URL}/auth/me`)
+    check(res, {
+        "me returned status 200":
+            (res) => res.status == 200
     })
     return res
 }

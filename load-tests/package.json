@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "pretest": "webpack",
-    "test": "k6 run build/index.js --compatibility-mode=base -i 100000 -u 100"
+    "test": "k6 run build/index.js --compatibility-mode=base -d 3s -u 10"
   },
   "engines": {},
   "devDependencies": {
