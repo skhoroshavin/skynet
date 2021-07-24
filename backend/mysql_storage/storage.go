@@ -2,10 +2,26 @@ package mysql_storage
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/rubenv/sql-migrate"
 	"skynet/domain/spi"
 )
+
+var migrations = migrate.MemoryMigrationSource{
+	Migrations: []*migrate.Migration{
+		{
+			Id: "1",
+			Up: []string{
+				MigrateUsersV1,
+				MigrateSessionsV1,
+			},
+			Down: []string{
+				MigrateUsersV1Down,
+				MigrateSessionsV1Down,
+			},
+		},
+	},
+}
 
 type Storage struct {
 	db *sql.DB
@@ -18,17 +34,15 @@ type Repositories struct {
 func NewStorage(config *Config) (*Storage, error) {
 	db, err := sql.Open("mysql", config.mysqlDsn())
 	if err != nil {
-		return nil, fmt.Errorf("failed to open database: %s", err)
+		return nil, err
 	}
 
-	err = db.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %s", err)
+	s := &Storage{db}
+	if err := s.Setup(); err != nil {
+		return nil, err
 	}
 
-	return &Storage{
-		db: db,
-	}, nil
+	return s, nil
 }
 
 func (s Storage) Transaction(wrk func(r spi.Repositories) error) error {
@@ -46,11 +60,19 @@ func (s Storage) Transaction(wrk func(r spi.Repositories) error) error {
 	return tx.Commit()
 }
 
-func (s Storage) CreateSchema() error {
-	if err := createUsersSchema(s.db); err != nil {
+func (s Storage) Setup() error {
+	migrate.SetTable("migrations")
+	_, err := migrate.Exec(s.db, "mysql", migrations, migrate.Up)
+	if err != nil {
 		return err
 	}
-	if err := createSessionsSchema(s.db); err != nil {
+	return nil
+}
+
+func (s Storage) CleanUp() error {
+	migrate.SetTable("migrations")
+	_, err := migrate.Exec(s.db, "mysql", migrations, migrate.Down)
+	if err != nil {
 		return err
 	}
 	return nil

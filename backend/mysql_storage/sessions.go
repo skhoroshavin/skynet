@@ -4,18 +4,18 @@ import (
 	"database/sql"
 )
 
+const (
+	MigrateSessionsV1 = `
+create table sessions (
+	session_id varchar(64) primary key,
+	user_id    varchar(64)
+);`
+	MigrateSessionsV1Down = `
+drop table sessions;`
+)
+
 type Sessions struct {
 	tx *sql.Tx
-}
-
-func createSessionsSchema(db *sql.DB) error {
-	_, err := db.Exec(`
-        create table sessions (
-            session_id varchar(64) primary key, 
-            user_id    varchar(64)
-        );
-    `)
-	return err
 }
 
 func (s Sessions) Insert(sessionId string, userId string) error {

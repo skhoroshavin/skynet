@@ -5,24 +5,24 @@ import (
 	"skynet/domain/models"
 )
 
+const (
+	MigrateUsersV1 = `
+create table users (
+	id         varchar(64) primary key,
+	password   varchar(64),
+	first_name varchar(64) character set utf8mb4 not null default "",
+	last_name  varchar(64) character set utf8mb4 not null default "",
+	birthday   date,
+	gender     enum('undefined', 'male', 'female') not null default "undefined",
+	city       varchar(64) character set utf8mb4 not null default "",
+	interests  text character set utf8mb4
+);`
+	MigrateUsersV1Down = `
+drop table users;`
+)
+
 type Users struct {
 	tx *sql.Tx
-}
-
-func createUsersSchema(db *sql.DB) error {
-	_, err := db.Exec(`
-        create table users (
-            id         varchar(64) primary key, 
-            password   varchar(64),
-            first_name varchar(64) character set utf8mb4 not null default "",
-            last_name  varchar(64) character set utf8mb4 not null default "",
-            birthday   date,
-            gender     enum('undefined', 'male', 'female') not null default "undefined",
-            city       varchar(64) character set utf8mb4 not null default "",
-            interests  text character set utf8mb4 
-        );
-    `)
-	return err
 }
 
 func (u Users) Insert(id string, password string) error {

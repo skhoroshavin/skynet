@@ -9,16 +9,9 @@ import (
 )
 
 func TestUsers(t *testing.T) {
-	config, err := createTestDatabase()
+	storage, err := NewStorage(EnvConfig())
 	assert.Nil(t, err)
-	defer dropTestDatabase(config)
-
-	storage, err := NewStorage(config)
-	assert.Nil(t, err)
-
-	if !assert.Nil(t, storage.CreateSchema()) {
-		return
-	}
+	defer storage.CleanUp()
 
 	t.Run("insert user", func(t *testing.T) {
 		t.Run("can insert new user", func(t *testing.T) {

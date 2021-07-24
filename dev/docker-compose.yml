@@ -10,10 +10,10 @@ services:
       - ./localhost.key:/etc/nginx/localhost.key:ro
     network_mode: "host"
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: dev
       MYSQL_DATABASE: skynet
-      MYSQL_USER: backend
+      MYSQL_USER: skynet
       MYSQL_PASSWORD: dev
     network_mode: "host"

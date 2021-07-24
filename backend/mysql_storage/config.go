@@ -15,7 +15,7 @@ type Config struct {
 func EnvConfig() *Config {
 	r := &Config{
 		HostName: "localhost",
-		UserName: "root",
+		UserName: "skynet",
 		Password: "dev",
 		DBName:   "skynet",
 	}
