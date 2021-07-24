@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"strings"
+	"time"
+)
 
 type Gender int
 
@@ -18,6 +22,15 @@ func (g Gender) String() string {
 		return "female"
 	default:
 		return "undefined"
+	}
+}
+
+func GenderFromString(s string) (Gender, error) {
+	switch strings.ToLower(s) {
+	case "undefined": return GenderUndefined, nil
+	case "male": return GenderMale, nil
+	case "female": return GenderFemale, nil
+	default: return GenderUndefined, fmt.Errorf("invalid gender %v", s)
 	}
 }
 

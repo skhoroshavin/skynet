@@ -10,4 +10,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
+	pgregory.net/rapid v0.4.7
 )

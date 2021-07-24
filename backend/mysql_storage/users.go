@@ -10,11 +10,11 @@ const (
 create table users (
 	id         varchar(64) primary key,
 	password   varchar(64),
-	first_name varchar(64) character set utf8mb4 not null default "",
-	last_name  varchar(64) character set utf8mb4 not null default "",
+	first_name varchar(64) character set utf8mb4,
+	last_name  varchar(64) character set utf8mb4,
 	birthday   date,
-	gender     enum('undefined', 'male', 'female') not null default "undefined",
-	city       varchar(64) character set utf8mb4 not null default "",
+	gender     enum('undefined', 'male', 'female'),
+	city       varchar(64) character set utf8mb4,
 	interests  text character set utf8mb4
 );`
 	MigrateUsersV1Down = `
@@ -64,10 +64,8 @@ func (u Users) Password(id string) (string, error) {
 }
 
 func (u Users) UserData(id string) (*models.UserData, error) {
-	var firstName, lastName, genderS, city string
+	var firstNameN, lastNameN, genderN, cityN, interestsN sql.NullString
 	var birthdayN sql.NullTime
-	var interestsN sql.NullString
-
 	err := u.tx.QueryRow("select "+
 		"first_name, "+
 		"last_name, "+
@@ -76,43 +74,42 @@ func (u Users) UserData(id string) (*models.UserData, error) {
 		"city, "+
 		"interests "+
 		"from users where id = ?", id).Scan(
-		&firstName,
-		&lastName,
+		&firstNameN,
+		&lastNameN,
 		&birthdayN,
-		&genderS,
-		&city,
+		&genderN,
+		&cityN,
 		&interestsN,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	birthday := &birthdayN.Time
-	if !birthdayN.Valid {
-		birthday = nil
+	result := &models.UserData{}
+
+	if firstNameN.Valid {
+		result.FirstName = firstNameN.String
 	}
 
-	var gender models.Gender
-	switch genderS {
-	case "male":
-		gender = models.GenderMale
-	case "female":
-		gender = models.GenderMale
-	default:
-		gender = models.GenderUndefined
+	if lastNameN.Valid {
+		result.LastName = lastNameN.String
 	}
 
-	interests := interestsN.String
-	if !interestsN.Valid {
-		interests = ""
+	if birthdayN.Valid {
+		result.Birthday = &birthdayN.Time
 	}
 
-	return &models.UserData{
-		FirstName: firstName,
-		LastName:  lastName,
-		Birthday:  birthday,
-		Gender:    gender,
-		City:      city,
-		Interests: interests,
-	}, nil
+	if genderN.Valid {
+		result.Gender, _ = models.GenderFromString(genderN.String)
+	}
+
+	if cityN.Valid {
+		result.City = cityN.String
+	}
+
+	if interestsN.Valid {
+		result.Interests = interestsN.String
+	}
+
+	return result, nil
 }
