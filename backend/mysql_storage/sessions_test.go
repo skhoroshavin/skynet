@@ -7,9 +7,7 @@ import (
 )
 
 func TestSessions(t *testing.T) {
-	storage, err := NewStorage(EnvConfig())
-	assert.Nil(t, err)
-	defer storage.CleanUp()
+	storage := newTestStorage()
 
 	t.Run("insert session", func(t *testing.T) {
 		t.Run("can insert new session", func(t *testing.T) {
