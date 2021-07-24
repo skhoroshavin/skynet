@@ -1,17 +1,22 @@
 package main
 
 import (
-	"log"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
 	"skynet/domain/services"
 	"skynet/http"
 	"skynet/mysql_storage"
 )
 
 func main() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
 	storageConf := mysql_storage.EnvConfig()
 	storage, err := mysql_storage.NewStorage(storageConf)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Send()
+		return
 	}
 
 	authSvc := services.NewAuthService(storage)
@@ -19,5 +24,6 @@ func main() {
 
 	httpConf := http.EnvConfig()
 	server := http.NewServer(httpConf, authSvc, usersSvc)
-	log.Fatal(server.Run())
+	err = server.Start(":8080")
+	log.Fatal().Err(err).Send()
 }

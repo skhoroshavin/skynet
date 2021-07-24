@@ -14,5 +14,5 @@ func TestServer_NotFound(t *testing.T) {
 	res := s.serve(req)
 
 	assert.Equal(t, http.StatusNotFound, res.Code)
-	assert.JSONEq(t, `{ "error": "not found" }`, res.Body.String())
+	assert.JSONEq(t, `{ "message": "Not Found" }`, res.Body.String())
 }

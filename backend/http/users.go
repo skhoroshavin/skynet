@@ -1,8 +1,7 @@
 package http
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"skynet/domain/api"
 	"skynet/domain/models"
@@ -22,7 +21,7 @@ type UserData struct {
 	Interests string     `json:"interests,omitempty"`
 }
 
-func attachUsers(e *gin.Engine, users api.Users) {
+func attachUsers(e *echo.Echo, users api.Users) {
 	u := Users{
 		users: users,
 	}
@@ -31,47 +30,39 @@ func attachUsers(e *gin.Engine, users api.Users) {
 	e.PUT("/users/:id", u.putUser)
 }
 
-func (u Users) getUser(c *gin.Context) {
+func (u Users) getUser(c echo.Context) error {
 	id := c.Param("id")
 
 	user, err := u.users.UserData(id)
 	if err != nil {
-		Error(c, http.StatusNotFound, fmt.Errorf(`user "%s" not found`, id))
-		return
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 
-	c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, user)
 }
 
-func (u Users) putUser(c *gin.Context) {
+func (u Users) putUser(c echo.Context) error {
 	var data UserData
 
 	id := c.Param("id")
-	if err := c.BindJSON(&data); err != nil {
-		Error(c, http.StatusBadRequest, err)
-		return
+	if err := c.Bind(&data); err != nil {
+		return err
 	}
 
 	userData := models.UserData{
-		data.FirstName,
-		data.LastName,
-		data.Birthday,
-		models.GenderUndefined,
-		data.City,
-		data.Interests,
+		FirstName: data.FirstName,
+		LastName:  data.LastName,
+		Birthday:  data.Birthday,
+		Gender:    models.GenderUndefined,
+		City:      data.City,
+		Interests: data.Interests,
 	}
 
-	if data.Gender == "male" {
-		userData.Gender = models.GenderMale
-	}
-	if data.Gender == "female" {
-		userData.Gender = models.GenderFemale
-	}
+	userData.Gender, _ = models.GenderFromString(data.Gender)
 
 	if err := u.users.UpdateUserData(id, &userData); err != nil {
-		Error(c, http.StatusInternalServerError, err)
-		return
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	return c.JSON(http.StatusOK, nil)
 }

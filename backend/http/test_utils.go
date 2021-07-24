@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
@@ -43,7 +43,7 @@ func (m *UsersServiceMock) UserData(id string) (*models.UserData, error) {
 }
 
 type TestServer struct {
-	s     *gin.Engine
+	s     *echo.Echo
 	auth  *AuthServiceMock
 	users *UsersServiceMock
 }
@@ -62,6 +62,7 @@ func newTestServer() *TestServer {
 
 func (t TestServer) serve(req *http.Request) *httptest.ResponseRecorder {
 	res := httptest.NewRecorder()
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	t.s.ServeHTTP(res, req)
 	return res
 }
