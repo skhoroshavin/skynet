@@ -5,20 +5,10 @@ import (
 	"net/http"
 	"skynet/domain/api"
 	"skynet/domain/models"
-	"time"
 )
 
 type Users struct {
 	users api.Users
-}
-
-type UserData struct {
-	FirstName string     `json:"first_name,omitempty"`
-	LastName  string     `json:"last_name,omitempty"`
-	Birthday  *time.Time `json:"birthday,omitempty"`
-	Gender    string     `json:"gender,omitempty"`
-	City      string     `json:"city,omitempty"`
-	Interests string     `json:"interests,omitempty"`
 }
 
 func attachUsers(e *echo.Echo, users api.Users) {
@@ -42,23 +32,11 @@ func (u Users) getUser(c echo.Context) error {
 }
 
 func (u Users) putUser(c echo.Context) error {
-	var data UserData
-
+	var userData models.UserData
 	id := c.Param("id")
-	if err := c.Bind(&data); err != nil {
+	if err := c.Bind(&userData); err != nil {
 		return err
 	}
-
-	userData := models.UserData{
-		FirstName: data.FirstName,
-		LastName:  data.LastName,
-		Birthday:  data.Birthday,
-		Gender:    models.GenderUndefined,
-		City:      data.City,
-		Interests: data.Interests,
-	}
-
-	userData.Gender, _ = models.GenderFromString(data.Gender)
 
 	if err := u.users.UpdateUserData(id, &userData); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())

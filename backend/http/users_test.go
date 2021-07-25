@@ -33,7 +33,7 @@ func TestGetExistingUser(t *testing.T) {
 			"first_name": "John",
 			"last_name": "Doe", 
 			"birthday": "1983-11-18T00:00:00Z",
-            "gender": 2,
+            "gender": "female",
             "city": "New Vegas",
             "interests": "Dismantling cyborgs"
 		}`,

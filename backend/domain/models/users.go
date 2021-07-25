@@ -1,6 +1,8 @@
 package models
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -32,6 +34,23 @@ func GenderFromString(s string) (Gender, error) {
 	case "female": return GenderFemale, nil
 	default: return GenderUndefined, fmt.Errorf("invalid gender %v", s)
 	}
+}
+
+func (g Gender) MarshalJSON() ([]byte, error) {
+	buffer := bytes.NewBufferString(`"`)
+	buffer.WriteString(g.String())
+	buffer.WriteString(`"`)
+	return buffer.Bytes(), nil
+}
+
+func (g *Gender) UnmarshalJSON(b []byte) error {
+	var s string
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	*g, _ = GenderFromString(s)
+	return nil
 }
 
 type UserData struct {
