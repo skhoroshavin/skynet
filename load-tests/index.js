@@ -6,6 +6,18 @@ import {check, group} from "k6";
 
 faker.seed(Date.now().valueOf() + __VU*1000000)
 
+export let options = {
+  scenarios: {
+    main: {
+      executor: 'ramping-vus',
+      stages: [
+        { duration: '300s', target: 20 },
+      ],
+      gracefulRampDown: '0s',
+    }
+  }
+}
+
 export default function () {
     const user = fakeUser()
 

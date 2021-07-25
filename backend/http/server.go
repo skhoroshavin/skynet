@@ -11,6 +11,24 @@ import (
 	"time"
 )
 
+func NewServer(config *Config, auth api.Auth, users api.Users) *echo.Echo {
+	e := echo.New()
+	e.HideBanner = true
+	e.HidePort = true
+
+	middleware.Logger()
+	e.Use(middleware.RequestID())
+	e.Use(Logger)
+	e.Use(ForceJSON)
+	e.Use(middleware.Secure())
+	e.Use(Recover)
+
+	attachAuth(e, config, auth)
+	attachUsers(e, users)
+
+	return e
+}
+
 func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
@@ -77,22 +95,4 @@ func Recover(next echo.HandlerFunc) echo.HandlerFunc {
 		}()
 		return next(c)
 	}
-}
-
-func NewServer(config *Config, auth api.Auth, users api.Users) *echo.Echo {
-	e := echo.New()
-	e.HideBanner = true
-	e.HidePort = true
-
-	middleware.Logger()
-	e.Use(middleware.RequestID())
-	e.Use(Logger)
-	e.Use(ForceJSON)
-	e.Use(middleware.Secure())
-	e.Use(Recover)
-
-	attachAuth(e, config, auth)
-	attachUsers(e, users)
-
-	return e
 }

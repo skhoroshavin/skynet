@@ -3,7 +3,7 @@ import {check} from "k6";
 import {API_URL} from "./constants";
 
 export function update(user) {
-    let res = http.put(`${API_URL}/users/${user.id}`, JSON.stringify({
+    let res = http.put(http.url`${API_URL}/users/${user.id}`, JSON.stringify({
         first_name: user.firstName,
         last_name: user.lastName,
         gender: user.gender,
