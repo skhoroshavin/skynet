@@ -11,7 +11,7 @@ export let options = {
     main: {
       executor: 'ramping-vus',
       stages: [
-        { duration: '300s', target: 20 },
+        { duration: '3s', target: 1 },
       ],
       gracefulRampDown: '0s',
     }
@@ -28,11 +28,23 @@ export default function () {
     group("get current user", () => {
         let res = auth.me()
         check(res, {
-            "me returned current user": res.json("id") == user.id
+            "me returned current user": res.json("id") === user.id
         })
     })
 
     group("fill in user data", () => {
         users.update(user)
     })
+
+   group("get user data", () => {
+       let res = users.get(user.id).json()
+
+       // TODO: Check birthday
+       check(res, {
+           "first name is correct": res["first_name"] === user.firstName,
+           "last name is correct": res["last_name"] === user.lastName,
+           "gender is correct": res["gender"] === user.gender,
+           "city is correct": res["city"] === user.city,
+       })
+   })
 }

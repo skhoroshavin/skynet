@@ -9,7 +9,7 @@ export function signup(user) {
     }))
     check(res, {
         "returned status 200":
-            (res) => res.status == 200,
+            (res) => res.status === 200,
         "provided session id in a cookie":
             (res) => (res.cookies.sessionid != null),
 
@@ -21,7 +21,7 @@ export function me() {
     let res = http.get(`${API_URL}/auth/me`)
     check(res, {
         "me returned status 200":
-            (res) => res.status == 200
+            (res) => res.status === 200
     })
     return res
 }

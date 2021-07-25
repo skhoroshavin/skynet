@@ -64,10 +64,10 @@ export function fakeUser() {
     return {
         id: id,
         password: password,
-        firstName: faker.datatype.number(10) < 9 ? firstName : null,
-        lastName: faker.datatype.number(10) < 6 ? lastName : null,
-        gender: faker.datatype.number(10) < 9 ? gender : null,
-        birthday: faker.datatype.number(10) < 6 ? birthday : null,
-        city: faker.datatype.number(10) < 5 ? city : null
+        firstName: faker.datatype.number(10) < 9 ? firstName : undefined,
+        lastName: faker.datatype.number(10) < 6 ? lastName : undefined,
+        gender: faker.datatype.number(10) < 9 ? gender : undefined,
+        birthday: faker.datatype.number(10) < 6 ? birthday : undefined,
+        city: faker.datatype.number(10) < 5 ? city : undefined
     }
 }
