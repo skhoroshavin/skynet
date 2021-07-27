@@ -12,18 +12,16 @@ export const getServerSideProps = async (context: any) => {
 }
 
 export default function UserPage(props: UserData) {
-    return (
-        <Container>
-            <Row>
-                <Col xs="12" md="4">
-                    <Card style={{marginTop: 25}}>
-                        <Card.Img src="/nuclear_blast.png"/>
-                    </Card>
-                </Col>
-                <Col xs="12" md="8">
-                    <UserDataCard {...props}/>
-                </Col>
-            </Row>
-        </Container>
-    )
+    return <Container>
+        <Row>
+            <Col xs="12" md="4">
+                <Card style={{marginTop: 25}}>
+                    <Card.Img src="/nuclear_blast.png"/>
+                </Card>
+            </Col>
+            <Col xs="12" md="8">
+                <UserDataCard {...props}/>
+            </Col>
+        </Row>
+    </Container>
 }

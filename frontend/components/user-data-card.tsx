@@ -10,11 +10,10 @@ const UserDataRow = (props: InfoRowProps) => {
     if (!props.value)
         return null
 
-    return (
-        <Row>
-            <Col xs="3" style={{color: "gray"}}>{props.label}</Col>
-            <Col>{props.value}</Col>
-        </Row>)
+    return <Row>
+        <Col xs="3" style={{color: "gray"}}>{props.label}</Col>
+        <Col>{props.value}</Col>
+    </Row>
 }
 
 export const UserDataCard = (props: UserData) => {
