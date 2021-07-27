@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"skynet/domain/api"
+	"time"
 )
 
 type Auth struct {
@@ -19,6 +20,7 @@ type UserCredentials struct {
 func attachAuth(e *echo.Echo, config *Config, auth api.Auth) {
 	a := Auth{config, auth}
 	e.POST("/auth/signup", a.signup)
+	e.POST("/auth/signout", a.signout)
 	e.GET("/auth/me", a.me)
 }
 
@@ -37,6 +39,23 @@ func (a Auth) signup(c echo.Context) error {
 		Name:       "sessionid",
 		Value:      sessionID,
 		Path:       "/",
+		Domain:     a.config.DomainName,
+		Secure:     true,
+		HttpOnly:   true,
+		SameSite:   http.SameSiteLaxMode,
+	})
+	return c.JSON(http.StatusOK, nil)
+}
+
+// TODO: Test me
+func (a Auth) signout(c echo.Context) error {
+	// TODO: Invalidate session
+
+	c.SetCookie(&http.Cookie{
+		Name:       "sessionid",
+		Value:      "",
+		Path:       "/",
+		Expires:    time.Now(),
 		Domain:     a.config.DomainName,
 		Secure:     true,
 		HttpOnly:   true,

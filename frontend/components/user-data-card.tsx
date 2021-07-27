@@ -11,7 +11,7 @@ const UserDataRow = (props: InfoRowProps) => {
         return null
 
     return <Row>
-        <Col xs="3" style={{color: "gray"}}>{props.label}</Col>
+        <Col xs="4" style={{color: "gray"}}>{props.label}</Col>
         <Col>{props.value}</Col>
     </Row>
 }
