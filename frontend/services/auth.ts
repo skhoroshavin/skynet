@@ -1,7 +1,8 @@
+import {SKYNET_API} from "./_constants";
 
 export default {
     signUp: async (id: string, password: string): Promise<string|null> => {
-        const res = await fetch('/api/auth/signup', {
+        const res = await fetch(`${SKYNET_API}/auth/signup`, {
             method: "POST",
             body: JSON.stringify({id, password})
         })
@@ -12,7 +13,7 @@ export default {
     },
 
     signIn: async (id: string, password: string): Promise<string|null> => {
-        const res = await fetch('/api/auth/signin', {
+        const res = await fetch(`${SKYNET_API}/auth/signin`, {
             method: "POST",
             body: JSON.stringify({id, password})
         })
@@ -23,7 +24,7 @@ export default {
     },
 
     me: async (): Promise<string|null> => {
-        const res = await fetch('/api/auth/me')
+        const res = await fetch(`${SKYNET_API}/auth/me`)
         if (res.status != 200)
             return null
         const body = await res.json()
