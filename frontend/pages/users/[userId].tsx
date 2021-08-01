@@ -1,4 +1,3 @@
-import {Card, Col, Container, Row} from "react-bootstrap";
 import user, {UserData} from "../../services/user";
 import {UserDataCard} from "../../components/user-data-card";
 

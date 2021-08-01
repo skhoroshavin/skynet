@@ -1,4 +1,3 @@
-import {Card, Col, Row} from "react-bootstrap";
 import {UserData} from "../services/user";
 
 type InfoRowProps = {

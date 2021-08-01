@@ -1,17 +1,8 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import Link from "next/link";
-import {
-  Button,
-  Container,
-  Form,
-  Nav,
-  Navbar,
-  NavDropdown, NavItem,
-} from "react-bootstrap";
 import useSWR, {mutate} from "swr";
 import auth from "../services/auth";
-import "../app.scss"
 import React from "react";
 
 const UserSignedOut = () => {
