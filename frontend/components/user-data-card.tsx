@@ -9,22 +9,22 @@ const UserDataRow = (props: InfoRowProps) => {
     if (!props.value)
         return null
 
-    return <Row>
-        <Col xs="4" style={{color: "gray"}}>{props.label}</Col>
-        <Col>{props.value}</Col>
-    </Row>
+    return <div>
+        <div>{props.label}</div>
+        <div>{props.value}</div>
+    </div>
 }
 
 export const UserDataCard = (props: UserData) => {
     const birthday = props.birthday && new Date(props.birthday).toDateString()
 
-    return <Card body style={{marginTop: 25}}>
-        <Card.Title>{props.firstName} {props.lastName}</Card.Title>
+    return <div>
+        <div>{props.firstName} {props.lastName}</div>
         <hr/>
-        <Card.Text>
+        <div>
             <UserDataRow label="Birthday:" value={birthday}/>
             <UserDataRow label="Homecity:" value={props.city}/>
             <UserDataRow label="Interests:" value={props.interests}/>
-        </Card.Text>
-    </Card>
+        </div>
+    </div>
 }

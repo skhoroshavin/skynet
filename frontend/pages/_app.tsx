@@ -8,11 +8,10 @@ import React from "react";
 const UserSignedOut = () => {
   return <>
     <Link href="/signin" passHref>
-      <Nav.Link>Sign in</Nav.Link>
+      Sign in
     </Link>
-    <Nav.Link disabled>|</Nav.Link>
     <Link href="/signup" passHref>
-      <Nav.Link>Sign up</Nav.Link>
+      Sign up
     </Link>
   </>
 }
@@ -24,11 +23,11 @@ const UserSignedIn = (props: {userId: string|null|undefined}) => {
     await mutate("me")
   }
 
-  return <NavDropdown id="user-id" title={props.userId}>
-    <NavDropdown.Item href="#/signout" onClick={signOut}>
+  return <div id="user-id">
+    <a href="#/signout" onClick={signOut}>
       Sign out
-    </NavDropdown.Item>
-  </NavDropdown>
+    </a>
+  </div>
 }
 
 const UserInfo = (props: {userId: string|null|undefined}) => {
@@ -42,18 +41,16 @@ function SkyNet({ Component, pageProps }: AppProps) {
   const userId = useSWR("me", auth.me).data
 
   return <>
-    <Navbar bg="primary" fixed="top">
-      <Container>
-        <Navbar.Brand>SkyNET</Navbar.Brand>
-        <Form className="d-flex me-auto">
-          <Form.Control placeholder="Search"/>
-          <Button variant="outline-success">Search</Button>
-        </Form>
-        <Nav>
-          <UserInfo userId={userId}/>
-        </Nav>
-      </Container>
-    </Navbar>
+    <div>
+      <div>SkyNET</div>
+      <form>
+        <input type="search"/>
+        <button>Search</button>
+      </form>
+      <div>
+        <UserInfo userId={userId}/>
+      </div>
+    </div>
     <div style={{paddingTop: "60px"}}>
       <Component {...pageProps}/>
     </div>
