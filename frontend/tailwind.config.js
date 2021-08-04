@@ -1,11 +1,24 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
   purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'media',
   theme: {
-    extend: {},
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      primary: colors.red,
+      secondary: colors.teal,
+      grey: colors.warmGray,
+      black: colors.black,
+      white: colors.white
+    },
   },
   variants: {
-    extend: {},
+    extend: {
+      placeholderColor: ['hover'],
+      ringWidth: ['hover']
+    },
   },
   plugins: [],
 }

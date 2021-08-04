@@ -1,6 +1,7 @@
 import auth from "../services/auth";
 import {useState} from "react";
 import {useRouter} from "next/router";
+import {SignUpCard} from "../components/signup-card";
 
 export default function SignUp() {
     const [error, setError] = useState<string>()
@@ -20,24 +21,8 @@ export default function SignUp() {
     }
 
     return (
-        <div>
-            So, you want to sign in into SkyNET? That&apos;s awesome! Please provide your basic auth info here:
-            <br/>
-
-            <form onSubmit={signUp}>
-                <label>Login:</label><br/>
-                <input id="id" type="text"/><br/>
-
-                <label>Password:</label><br/>
-                <input id="password" type="password"/><br/>
-
-                <label>Password (again):</label><br/>
-                <input id="password_check" type="password"/><br/>
-
-                <button type="submit">Sign Up</button>
-            </form>
-
-            {error && <div className="error"> {error} </div>}
+        <div className="flex w-full h-screen -mt-16">
+             <SignUpCard className="w-1/3 mx-auto my-auto xl:w-1/4"/>
         </div>
     )
 }

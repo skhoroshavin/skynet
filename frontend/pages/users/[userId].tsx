@@ -1,6 +1,7 @@
 import user, {UserData} from "../../services/user";
-import {UserDataCard} from "../../components/user-data-card";
-import Image from "next/image"
+import {UserCard} from "../../components/user-card";
+import {Card} from "../../components/common/card";
+import {ChipIcon} from "@heroicons/react/solid";
 
 export const getServerSideProps = async (context: any) => {
     let res = await user.data(context.params.userId)
@@ -12,8 +13,10 @@ export const getServerSideProps = async (context: any) => {
 }
 
 export default function UserPage(props: UserData) {
-    return <div>
-         <Image src="/nuclear_blast.png" layout="fill" alt="Avatar"/>
-         <UserDataCard {...props}/>
-    </div>
+    return <>
+        <Card className="w-1/3 text-grey-200">
+            <ChipIcon/>
+        </Card>
+        <UserCard className="w-2/3 ml-4" user={props}/>
+    </>
 }

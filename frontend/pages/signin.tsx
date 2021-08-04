@@ -1,22 +1,15 @@
-import auth from "../services/auth";
-import {useState} from "react";
-import {useRouter} from "next/router";
+import {SignInCard} from "../components/signin-card";
 
 export default function SignIn() {
-    return (
-        <div>
-            So, you want to sign in into SkyNET? That&apos;s awesome! Please provide your basic auth info here:
-            <br/>
-
-            <form >
-                <label>Login:</label><br/>
-                <input id="id" type="text"/><br/>
-
-                <label>Password:</label><br/>
-                <input id="password" type="password"/><br/>
-
-                <button type="submit">Sign In</button>
-            </form>
+    return <>
+        <div className="self-stretch flex flex-col justify-evenly flex-1 text-center font-mono text-primary-900">
+            <h1 className="text-6xl font-bold">
+                SkyNET
+            </h1>
+            <h3 className="text-xl">
+                Please identify yourself or be immediately dismantled for further investigation
+            </h3>
         </div>
-    )
+        <SignInCard className="ml-4 w-96"/>
+    </>
 }
