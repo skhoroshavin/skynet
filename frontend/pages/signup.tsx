@@ -21,8 +21,8 @@ export default function SignUp() {
     }
 
     return (
-        <div className="flex w-full h-screen -mt-16">
-             <SignUpCard className="w-1/3 mx-auto my-auto xl:w-1/4"/>
+        <div className="fullscreen flex">
+             <SignUpCard className="w-96 m-auto"/>
         </div>
     )
 }

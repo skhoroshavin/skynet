@@ -1,7 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import {NavBrand} from "./brand";
 import {NavSearch} from "./search";
+import {NuclearBlast} from "../common/nuclear-blast";
+
+export const NavBrand = () => {
+    return <Link href={"/"} passHref>
+        <a><NuclearBlast className="p-3 h-16"/></a>
+    </Link>
+}
 
 type NavLinkProps = {
     text: string,
