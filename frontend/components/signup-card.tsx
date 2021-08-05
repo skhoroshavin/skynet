@@ -1,5 +1,4 @@
-import {FormEvent} from "react";
-import {FormButton, FormInput, LinkButton} from "./common/form";
+import {ChangeEvent, FormEvent} from "react";
 import {Card, CardDivider, CardTitle} from "./common/card";
 
 type SignUpCardProps = {
@@ -7,6 +6,10 @@ type SignUpCardProps = {
 }
 
 export const SignUpCard = ({ className }: SignUpCardProps) => {
+    const handleChangeIdentifier = async (e: ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.value)
+    }
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         console.log("Sign In")
@@ -18,10 +21,10 @@ export const SignUpCard = ({ className }: SignUpCardProps) => {
         </CardTitle>
         <CardDivider className="mt-4"/>
         <form onSubmit={handleSubmit}>
-            <FormInput className="mt-5 w-full" id="id" type="text" placeholder="Identifier"/>
-            <FormInput className="mt-4 w-full" id="password" type="password" placeholder="Password"/>
-            <FormInput className="mt-4 w-full" id="password" type="password" placeholder="Repeat password"/>
-            <FormButton className="mt-4 w-full">Continue</FormButton>
+            <input className="input mt-5 w-full" onChange={handleChangeIdentifier} type="text" placeholder="Identifier"/>
+            <input className="input mt-4 w-full" id="password" type="password" placeholder="Password"/>
+            <input className="input mt-4 w-full" id="password" type="password" placeholder="Repeat password"/>
+            <button className="button mt-4 w-full">Continue</button>
         </form>
     </Card>
 }
