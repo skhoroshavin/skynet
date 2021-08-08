@@ -10,7 +10,7 @@ export default function Home() {
     useEffect(() => {
         const url = userId ? `/users/{userId}` : "/signin"
         router.push(url)
-    }, [userId])
+    }, [userId, router])
 
     return <div className="mx-auto text-xl text-primary-900">
         En route, calculating optimal destination...

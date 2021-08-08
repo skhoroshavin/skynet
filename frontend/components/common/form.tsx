@@ -1,0 +1,50 @@
+import {FieldValues} from "react-hook-form/dist/types/fields";
+import {FieldPath} from "react-hook-form/dist/types/utils";
+import {FieldErrors, RegisterOptions, UseFormRegister} from "react-hook-form";
+import {Spinner} from "./spinner";
+
+type FormInputProps<TFieldValues extends FieldValues> = {
+    id: FieldPath<TFieldValues>
+    className?: string
+    type?: string
+    placeholder?: string
+    options?: RegisterOptions<TFieldValues>
+    register: UseFormRegister<TFieldValues>
+    errors: FieldErrors<TFieldValues>
+}
+
+export const FormInput = <TFieldValues extends FieldValues>({id, className, type, placeholder, options, register, errors}: FormInputProps<TFieldValues>) => {
+    type = type || "text"
+    options = options || {}
+
+    const error: any = errors[id]
+
+    return <>
+        <input className={`h-10
+                           p-2 rounded
+                           border border-primary-400
+                           ring-primary-200
+                           hover:ring-2
+                           focus:outline-none focus:rings
+                           ${error && "bg-error-100"} ${className}`}
+               type={type} placeholder={placeholder}
+               {...register(id, options)}/>
+        <div className={`mt-0.5 h-4 text-xs text-error-700`}>
+            {error?.message}
+        </div>
+    </>
+}
+
+type FormButtonProps = {
+    text: string,
+    className?: string,
+    isSubmitting: boolean
+}
+
+export const FormButton = ({ text, className, isSubmitting }: FormButtonProps) => {
+    return <button className={`button flex justify-center ${isSubmitting && "bg-primary-600"} ${className}`}
+                   disabled={isSubmitting}>
+        <Spinner className={`h-5 w-5 my-0.5 mr-2 text-white ${isSubmitting || "hidden"}`}/>
+        <span className={isSubmitting ? "hidden" : ""}>{text}</span>
+    </button>
+}

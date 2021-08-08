@@ -4,7 +4,6 @@ import {useRouter} from "next/router";
 import {SignUpCard} from "../components/signup-card";
 
 export default function SignUp() {
-    const [error, setError] = useState<string>()
     const router = useRouter()
 
     const signUp = async (event: any) => {

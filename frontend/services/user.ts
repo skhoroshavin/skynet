@@ -9,6 +9,12 @@ export type UserData = {
 }
 
 export default {
+    exists: async (id: string): Promise<boolean> => {
+        // TODO: Use head request
+        const res = await fetch(`${SKYNET_API}/users/${id}`)
+        return res.status == 200;
+    },
+
     data: async (id: string): Promise<UserData | Error> => {
         const res = await fetch(`${SKYNET_API}/users/${id}`)
         const body = await res.json()

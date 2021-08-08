@@ -12,17 +12,6 @@
 }
 
 @layer components {
-    .input {
-        @apply
-            p-2
-            rounded
-            border border-primary-400
-            ring-primary-200
-            hover:ring-2
-            focus:outline-none focus:ring
-        ;
-    }
-
     .button {
         @apply
             p-2
