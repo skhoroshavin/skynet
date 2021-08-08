@@ -42,7 +42,10 @@ type FormButtonProps = {
 }
 
 export const FormButton = ({ text, className, isSubmitting }: FormButtonProps) => {
-    return <button className={`button flex justify-center ${isSubmitting && "bg-primary-600"} ${className}`}
+    return <button className={`p-2 rounded
+                               bg-primary-500
+                               hover:bg-primary-600
+                               flex justify-center ${isSubmitting && "bg-primary-600"} ${className}`}
                    disabled={isSubmitting}>
         <Spinner className={`h-5 w-5 my-0.5 mr-2 text-white ${isSubmitting || "hidden"}`}/>
         <span className={isSubmitting ? "hidden" : ""}>{text}</span>

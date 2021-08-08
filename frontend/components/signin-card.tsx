@@ -1,10 +1,9 @@
-import Link from "next/link";
-import React from "react";
 import {Card, CardDivider} from "./common/card";
 import {useForm} from "react-hook-form";
 import auth from "../services/auth";
 import {useRouter} from "next/router";
 import {FormButton, FormInput} from "./common/form";
+import {LinkButton} from "./common/link";
 
 type SignInCardProps = {
     className?: string
@@ -43,11 +42,9 @@ export const SignInCard = ({ className }: SignInCardProps) => {
                         text="Sign In" isSubmitting={isSubmitting}/>
 
             <CardDivider className="mt-4"/>
-            <Link href={"/signup"} passHref>
-                <a className="button mt-4 w-full bg-secondary-300 hover:bg-secondary-400">
-                    Register
-                </a>
-            </Link>
+
+            <LinkButton className="mt-4 w-full bg-secondary-300 hover:bg-secondary-400"
+                        href="/signup" text="Join SkyNET"/>
         </form>
     </Card>
 }
