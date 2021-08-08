@@ -1,4 +1,3 @@
-import React, {FC} from "react";
 import Link from "next/link";
 
 type LinkButtonProps = {
@@ -7,7 +6,7 @@ type LinkButtonProps = {
     text: string
 }
 
-export const LinkButton: FC<LinkButtonProps> = ({className, href, text}) => {
+export const LinkButton = ({className, href, text}: LinkButtonProps) => {
     return <Link href={href} passHref>
         <a className={`block
                        p-2 rounded

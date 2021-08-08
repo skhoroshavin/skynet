@@ -1,4 +1,4 @@
-import {UserData} from "../services/user";
+import {UserData} from "../client/user";
 import {Card, CardDivider, CardTitle} from "./common/card";
 
 type InfoRowProps = {

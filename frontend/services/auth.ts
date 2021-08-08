@@ -1,40 +1,10 @@
-import {SKYNET_API} from "./_constants";
+import useSWR, {mutate} from "swr";
+import auth from "../client/auth";
 
-export default {
-    signUp: async (id: string, password: string): Promise<string|null> => {
-        const res = await fetch(`${SKYNET_API}/auth/signup`, {
-            method: "POST",
-            body: JSON.stringify({id, password})
-        })
-        if (res.status == 200)
-            return null
-        const body = await res.json()
-        return body.err
-    },
+const _SWR_CURRENT_USER = "/auth/me"
 
-    signIn: async (id: string, password: string): Promise<string|null> => {
-        const res = await fetch(`${SKYNET_API}/auth/signin`, {
-            method: "POST",
-            body: JSON.stringify({id, password})
-        })
-        if (res.status == 200)
-            return null
-        const body = await res.json()
-        return body.err
-    },
+export const useCurrentUser = () => {
+    const { data } = useSWR(_SWR_CURRENT_USER, auth.me)
 
-    signOut: async (): Promise<void> => {
-        await fetch(`${SKYNET_API}/auth/signout`, {
-            method: "POST"
-        })
-        return
-    },
-
-    me: async (): Promise<string|null> => {
-        const res = await fetch(`${SKYNET_API}/auth/me`)
-        if (res.status != 200)
-            return null
-        const body = await res.json()
-        return body.id
-    },
+    return data;
 }

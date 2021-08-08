@@ -1,14 +1,13 @@
-import auth from "../services/auth";
-import useSWR from "swr"
 import {useRouter} from "next/router";
 import {useEffect} from "react";
+import {useCurrentUser} from "../services/auth";
 
 export default function Home() {
-    const userId = useSWR("me", auth.me).data
-    const router = useRouter()
+    const userId = useCurrentUser()
 
+    const router = useRouter()
     useEffect(() => {
-        const url = userId ? `/users/{userId}` : "/signin"
+        const url = userId ? `/users/${userId}` : "/signin"
         router.push(url)
     }, [userId, router])
 

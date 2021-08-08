@@ -1,6 +1,6 @@
 import {Card, CardDivider} from "./common/card";
 import {useForm} from "react-hook-form";
-import auth from "../services/auth";
+import auth from "../client/auth";
 import {useRouter} from "next/router";
 import {FormButton, FormInput} from "./common/form";
 import {LinkButton} from "./common/link";
