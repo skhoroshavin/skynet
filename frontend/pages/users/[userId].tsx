@@ -1,4 +1,4 @@
-import user, {UserData} from "../../client/user";
+import user, {UserData} from "../../api/user";
 import {UserCard} from "../../components/user-card";
 import {Card} from "../../components/common/card";
 import {ChipIcon} from "@heroicons/react/solid";

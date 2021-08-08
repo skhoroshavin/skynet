@@ -1,5 +1,5 @@
 import useSWR, {mutate} from "swr";
-import auth from "../client/auth";
+import auth from "../api/auth";
 
 const _SWR_CURRENT_USER = "/auth/me"
 
