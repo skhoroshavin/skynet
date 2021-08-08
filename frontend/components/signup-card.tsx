@@ -17,19 +17,18 @@ type SignUpInputs = {
 }
 
 export const SignUpCard = ({ className }: SignUpCardProps) => {
-    const router = useRouter()
     const { handleSubmit, register, formState: { errors, isSubmitting }, watch } = useForm<SignUpInputs>({
         mode: "onTouched"
     });
     const password = watch("password")
 
+    const router = useRouter()
     const onSubmit = async (data: SignUpInputs) => {
-        // const result = await auth.signUp(data.id, data.password)
-        const result = null
+        const result = await auth.signUp(data.id, data.password)
         if (result == null)
             await router.push(`/users/${data.id}`)
         else
-            console.log('Failed to register user')
+            alert(`Failed to register user: ${result}`)
     }
 
     return <Card className={className}>
