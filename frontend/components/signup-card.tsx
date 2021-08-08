@@ -1,10 +1,10 @@
 import {Card, CardDivider, CardTitle} from "./common/card";
 import {useForm} from "react-hook-form";
-import auth from "../api/auth"
-import user from "../api/user"
+import {user} from "../api/user"
 import {useRouter} from "next/router";
 import {asyncDebounce} from "../utils/debounce";
 import {FormButton, FormInput} from "./common/form";
+import {signUp} from "../services/auth";
 
 type SignUpCardProps = {
     className?: string
@@ -24,7 +24,7 @@ export const SignUpCard = ({ className }: SignUpCardProps) => {
 
     const router = useRouter()
     const onSubmit = async (data: SignUpInputs) => {
-        const result = await auth.signUp(data.id, data.password)
+        const result = await signUp(data.id, data.password)
         if (result == null)
             await router.push(`/users/${data.id}`)
         else

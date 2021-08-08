@@ -8,7 +8,7 @@ export type UserData = {
     interests: string
 }
 
-export default {
+export const user = {
     exists: async (id: string): Promise<boolean> => {
         // TODO: Use head request
         const res = await fetch(`${SKYNET_API}/users/${id}`)

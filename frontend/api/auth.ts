@@ -1,6 +1,6 @@
 import {SKYNET_API} from "./_constants";
 
-export default {
+export const auth = {
     signUp: async (id: string, password: string): Promise<string|null> => {
         const res = await fetch(`${SKYNET_API}/auth/signup`, {
             method: "POST",
