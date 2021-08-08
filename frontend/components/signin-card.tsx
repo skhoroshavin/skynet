@@ -15,9 +15,7 @@ type SignInInputs = {
 }
 
 export const SignInCard = ({ className }: SignInCardProps) => {
-    const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<SignInInputs>({
-        mode: "onTouched"
-    });
+    const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<SignInInputs>();
 
     const router = useRouter()
     const onSubmit = async (data: SignInInputs) => {

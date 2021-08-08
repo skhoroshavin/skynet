@@ -7,7 +7,7 @@ import {NavUser} from "./user";
 export const NavBar = () => {
     return <nav className="h-full mx-auto container flex items-center">
         <Link href={"/"} passHref>
-            <a><NuclearBlast className="p-3 h-16"/></a>
+            <a><NuclearBlast className="ml-4 py-3 h-16"/></a>
         </Link>
         <NavSearch/>
         <NavUser/>

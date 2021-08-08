@@ -1,11 +1,7 @@
-import React from "react";
+import React, {PropsWithChildren} from "react";
 import {NavBar} from "./navbar/navbar";
 
-type AppLayoutProps = {
-    children: React.ReactFragment
-};
-
-export const AppLayout = ({ children }: AppLayoutProps) => {
+export const AppLayout = ({ children }: PropsWithChildren<void>) => {
     return <>
         <header className="bg-primary-600 text-grey-900 fixed inset-x-0 top-0 h-16 z-10">
             <NavBar/>

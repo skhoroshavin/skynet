@@ -1,10 +1,10 @@
+import {PropsWithChildren} from "react";
 
 type CardProps = {
-    children: React.ReactFragment,
     className?: string
 }
 
-export const Card = ({ className, children }: CardProps) => {
+export const Card = ({ className, children }: PropsWithChildren<CardProps>) => {
     return <div className={`p-4 bg-white rounded-lg shadow-md ${className}`}>
         {children}
     </div>
