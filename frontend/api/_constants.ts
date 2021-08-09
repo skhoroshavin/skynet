@@ -1,5 +1,4 @@
-
-export const IS_SERVER = typeof window === 'undefined'
+import {IS_SERVER} from "../utils/constants";
 
 export const SKYNET_API = IS_SERVER ?
     (process.env.SKYNET_API || "http://localhost:8080") :

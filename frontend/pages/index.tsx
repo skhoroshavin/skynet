@@ -11,7 +11,5 @@ export default function Home() {
         router.push(url)
     }, [userId, router])
 
-    return <div className="mx-auto text-xl text-primary-900">
-        En route, calculating optimal destination...
-    </div>
+    return null
 }
